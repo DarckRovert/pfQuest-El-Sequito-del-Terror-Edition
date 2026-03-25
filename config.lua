@@ -236,7 +236,7 @@ pfQuestConfig.title:SetFontObject(GameFontWhite)
 pfQuestConfig.title:SetPoint("TOP", pfQuestConfig, "TOP", 0, -8)
 pfQuestConfig.title:SetJustifyH("LEFT")
 pfQuestConfig.title:SetFont(pfUI.font_default, 14)
-pfQuestConfig.title:SetText("|cff33ffccpf|rQuest " .. L["Config"])
+pfQuestConfig.title:SetText("|cff33ffccpf|cffffffffQuest |r|cff00ccff[Séquito del Terror]|r")
 
 pfQuestConfig.close = CreateFrame("Button", "pfQuestConfigClose", pfQuestConfig)
 pfQuestConfig.close:SetPoint("TOPRIGHT", -5, -5)

@@ -15,4 +15,5 @@
   <Include file="..\journal.lua"/>
   <Include file="..\menu.lua"/>
   <Include file="..\updatenotify.lua"/>
+  <Include file="..\sequito_init.lua"/>
 </Ui>
