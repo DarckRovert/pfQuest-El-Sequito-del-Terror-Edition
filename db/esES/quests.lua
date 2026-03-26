@@ -1,8 +1,8 @@
 pfDB["quests"]["esES"] = {
   [1] = {
-    ["D"] = "$Tpunk;!  Kill Kobold Vermin, 2 of em. NEW TEST AGAIN",
-    ["O"] = "Kill Kobold Vermin, 2 of em.",
-    ["T"] = "The \"Chow\" Quest (123)aa",
+    ["D"] = "$n, lo primero que tienes que hacer es limpiar; un clan de alimañas kobold ha invadido los bosques del norte. Ve y liquida a 10 de ellos; si reducimos sus filas podremos echarlos de Villanorte. El Séquito del Terror te observa.",
+    ["O"] = "Mata 10 alimañas kobold.",
+    ["T"] = "Una amenaza en el interior",
   },
   [2] = {
     ["D"] = "El poderoso hipogrifo Garrafilada ha sido ejecutado, con la garra de la bestia derribada como testimonio de tu victoria. Seguro que Senani Truenozón, del Puesto del Hachazo, estará interesado en ver este trofeo que prueba tus actos.",
