@@ -7,6 +7,29 @@ The addon is not designed to be a quest- or tourguide, instead the goals are to 
 
 pfQuest is the successor of [ShaguQuest](https://shagu.org/ShaguQuest/) and has been entirely written from scratch. In comparison to [ShaguQuest](https://shagu.org/ShaguQuest/), this addon does not depend on any specific map- or questlog addon. It's designed to support the default interface aswell as every other addon. In case you experience any addon conflicts, please add an issue to the bugtracker.
 
+---
+
+# 🌐 El Ecosistema del Terror (SquadMind Integration)
+
+Esta es la edición **[Séquito del Terror]**. Además de estar completamente traducido al español para la comodidad del clan, `pfQuest` ahora funciona como la **Terminal de Inteligencia de Entorno** de nuestra Red Neural.
+
+```mermaid
+graph TD
+    classDef intel fill:#003366,stroke:#00BFFF,stroke-width:2px,color:#fff;
+    classDef core fill:#2C0000,stroke:#FF0000,stroke-width:2px,color:#fff;
+    PFQ["📜 pfQuest<br/>(Inteligencia)"]:::intel
+    ATLAS["🗺️ Atlas-TW<br/>(Estrategia Dungeon)"]:::intel
+    TSAI["🧠 TerrorSquadAI<br/>(Comando)"]:::core
+    
+    PFQ -.->|Rutas Tácticas de farmeo| ATLAS
+    PFQ -.->|Compartición de misiones| TSAI
+```
+
+- **Simbiosis con Atlas-TW**: Integración directa en la base de datos para que los mapas de mazmorras muestren instantáneamente rutas y localizaciones de NPCs.
+- **Simbiosis con TerrorSquadAI**: Al integrarse en el HUD del escuadrón, permite coordinar el farmeo en mapas de mundo abierto compartiendo información posicional con el radar de TSAI.
+
+---
+
 # Downloads
 You can check the [[Latest Changes]](https://github.com/shagu/pfQuest/commits/master) page to see what has changed recently.
 
