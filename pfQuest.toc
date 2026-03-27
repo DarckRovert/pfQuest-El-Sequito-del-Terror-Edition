@@ -1,6 +1,6 @@
-﻿## Interface: 11200
+## Interface: 11200
 ## Title: |cff33ffccpf|cffffffffQuest |r|cff00ccff[Séquito del Terror]|r
-## Author: Shagu - modified by me0wg4ming & El Séquito
+## Author: El Séquito del Terror
 ## Notes: A Questhelper and Database
 ## Notes-ruRU: ÐžÐ±Ð»ÐµÐ³Ñ‡ÐµÐ½Ð½Ñ‹Ð¹ Ð¿Ð¾Ð¼Ð¾Ñ‰Ð½Ð¸Ðº Ð·Ð°Ð´Ð°Ð½Ð¸Ð¹ Ð¸ Ð±Ð°Ð·Ð° Ð´Ð°Ð½Ð½Ñ‹Ñ…
 ## Version: 9.3.0 [God-Tier]
