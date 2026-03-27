@@ -1,23 +1,42 @@
-# pfQuest — v9.3.0 [God-Tier] ⚔️🛡️
+# pfQuest [Séquito del Terror Edition] — v9.3.0 [God-Tier] 🗺️⚔️
 
-Base de datos de misiones y objetos integrada para navegar Turtle WoW sin perder el tiempo.
+> **Asistente de misiones con base de datos integrada para Turtle WoW.** Fork de pfQuest de Shagu, adaptado y localizado al español para el Séquito.
 
-## 🚀 Características
-- Optimización extrema para Turtle WoW.
-- Integración nativa con el **WCS_Brain**.
-- Interfaz modernizada y limpia.
-
-## ⚙️ Instalación
-1. Descarga el ZIP.
-2. Extrae en Interface\AddOns\pfQuest.
-3. Reinicia el juego.
-
-## 🕸️ Comunidad y Gobernanza
-Este proyecto es parte del ecosistema oficial de **El Séquito del Terror**.
-
-- ⚖️ **[Licencia](./LICENSE)**: MIT License.
-- 🤝 **[Código de Conducta](./CODE_OF_CONDUCT.md)**: Estándar de la comunidad.
-- 🛠️ **[Contribución](./CONTRIBUTING.md)**: Guía de desarrollo.
+[![Licencia: MIT](https://img.shields.io/badge/licencia-MIT-blue.svg)](./LICENSE)
+[![Versión](https://img.shields.io/badge/version-9.3.0--God--Tier-blue)](./CHANGELOG.md)
 
 ---
-Desarrollado por **DarckRovert (Elnazzareno)** y el clan **El Séquito del Terror**.
+
+## 🗺️ ¿Qué es pfQuest?
+
+pfQuest es una base de datos de misiones, objetos y NPCs para Turtle WoW 1.12.1. Muestra objetivos en el minimapa, escanea el servidor en busca de datos personalizados de Turtle WoW y proporciona una interfaz limpia integrada en la UI de pfUI.
+
+**Créditos originales:** Shagu — [github.com/shagu/pfQuest](https://github.com/shagu/pfQuest)
+
+## 🚀 Características
+
+- Integración con el minimapa para objetivos de misiones.
+- Base de datos de items, NPCs y objetos de Turtle WoW.
+- Escaneo de servidor para datos personalizados.
+- Localización en **español** (esMX y esES).
+- Integración con pfUI para interfaz unificada.
+
+## ⚙️ Instalación
+
+1. Instala pfUI primero (recomendado).
+2. Extrae en Interface\AddOns\pfQuest\.
+3. Activa el addon y recarga la UI.
+
+## 🌐 Localización
+
+Ver [LOCALIZACION.md](./LOCALIZACION.md) para detalles de la localización al español.
+
+## 🕸️ Gobernanza
+
+- ⚖️ [Licencia MIT](./LICENSE) — Licencia original de Shagu
+- 🤝 [Código de Conducta](./CODE_OF_CONDUCT.md)
+- 🛠️ [Guía de Contribución](./CONTRIBUTING.md)
+
+---
+Fork mantenido por **DarckRovert (Elnazzareno)** para El Séquito del Terror.
+Código original © Shagu.

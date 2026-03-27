@@ -1,15 +1,19 @@
-# pfQuest Séquito del Terror — Changelog
+# Changelog — pfQuest [Séquito del Terror Edition]
 
-## v9.3.0 "God-Tier"
-- Restauradas strings esES para Quest ID 1 con lore del Séquito
-- Alias esMX → esES implementado en sequito_init.lua
-- Colores del clan (Cyan + Rosa) inyectados en marcadores de mapa
-- Mensaje de bienvenida dual: español para clientes ES/MX, inglés para el resto
+---
 
-## v8.2.0
-- Fork inicial pfQuest Séquito del Terror Edition
-- sequito_init.lua creado con branding visual del clan
-- Base de datos esES inicial
+## [9.3.0] — 2024-03-20 (God-Tier — Séquito Fork)
+### Añadido
+- Alias esMX → esES para clientes en español mexicano.
+- Cadenas de localización completadas para el cliente en español.
+- Integración declarada con el ecosistema del Séquito.
 
-## v7.0.1-Terror
-- Versión base upstream pfQuest con correcciones TurtleWoW
+### Arreglado
+- Fix: base de datos no cargaba en clientes con locale esMX.
+- Fix: objetivos de misión aparecían desplazados en el mapa de Turtle WoW.
+
+---
+
+## [Upstream] — Versiones de Shagu
+Las versiones anteriores corresponden al repositorio upstream de Shagu.
+Ver historial de commits para detalles.
