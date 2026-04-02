@@ -15,5 +15,7 @@
   <Include file="..\journal.lua"/>
   <Include file="..\menu.lua"/>
   <Include file="..\updatenotify.lua"/>
+  <!-- Módulos Extend: ShowLoots + QuestHelper integrados en pfQuest -->
+  <Include file="..\extend\extend_init.xml"/>
   <Include file="..\sequito_init.lua"/>
 </Ui>

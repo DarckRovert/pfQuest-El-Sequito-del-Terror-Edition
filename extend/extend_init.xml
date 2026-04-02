@@ -1,0 +1,38 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+  <!-- ============================================================
+       pfQuest :: Extend Modules - El Séquito del Terror
+       Integración de pfExtend directamente en pfQuest
+       Carga tras toda la infraestructura base de pfQuest
+       ============================================================ -->
+
+  <!-- 1. Capa de compatibilidad de cliente (vanilla/tbc) -->
+  <Include file="..\extend\compat_client.lua"/>
+
+  <!-- 2. Estado global y utilidades de tabla -->
+  <Include file="..\extend\global.lua"/>
+
+  <!-- 3. Localizaciones (antes de create_manager para que existan las tablas) -->
+  <Include file="..\extend\locale_enUS.lua"/>
+  <Include file="..\extend\locale_esES.lua"/>
+
+  <!-- 4. Gestor de locales (selecciona idioma activo) -->
+  <Include file="..\extend\locale_manager.lua"/>
+
+  <!-- 5. Configuración de módulos (ShowLoots + QuestHelper + About) -->
+  <Include file="..\extend\extend_config.lua"/>
+
+  <!-- 6. ShowLoots: lógica de tooltip y BD de drops -->
+  <Include file="..\extend\showloots_main.lua"/>
+
+  <!-- 7. ShowLoots: ventana de browser de drops -->
+  <Include file="..\extend\showloots_browser.lua"/>
+
+  <!-- 8. QuestHelper: árbol de cadenas de misiones -->
+  <Include file="..\extend\questhelper_main.lua"/>
+
+  <!-- 9. QuestHelper: UI del browser de misiones -->
+  <Include file="..\extend\questhelper_browser.lua"/>
+
+  <!-- 10. Config Manager: ventana de configuración unificada -->
+  <Include file="..\extend\extend_manager.lua"/>
+</Ui>
