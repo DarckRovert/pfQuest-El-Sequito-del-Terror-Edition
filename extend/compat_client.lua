@@ -135,7 +135,7 @@ if not C_Timer then
             timer:Start(duration, callback)
             return timerObj
         end,
-        NewTicker = function(duration, callback, ...)
+        NewTicker = function(duration, callback)
             local timer, timerObj = GenerateTimer()
             local iterations      = unpack(arg)
             if type(iterations) ~= "number" or iterations < 0 then iterations = 0 end
