@@ -379,9 +379,9 @@ local locales = {
     ["Use <Shift>-Click To Remove Nodes"] = "Usa <Shift>-Clic para eliminar nodos",
     ["Vendor"] = "Vendedor",
     ["World Map Node Transparency"] = "Transparencia de nodos del mapa",
-    ["You already did this quest."] = "Ya completas esta misión",
-    ["You are on this quest."] = "Misión en progresa",
-    ["You don't have this quest."] = "No tienes esta misión",
+    ["You already did this quest."] = "Ya completaste esta misión.",
+    ["You are on this quest."] = "Misión en progreso.",
+    ["You don't have this quest."] = "No tienes esta misión.",
   },
   ["koKR"] = {
     ["Alliance"] = nil,
@@ -1726,8 +1726,21 @@ local locales = {
 }
 
 locales["esMX"] = locales["esES"]
-pfQuest_Loc = setmetatable(locales[GetLocale()] or {}, { __index = function(tab,key)
- local value = tostring(key)
- rawset(tab,key,value)
- return value
-end})
+
+-- Build pfQuest_Loc with proper esES -> enUS fallback chain
+-- Priority: active locale -> enUS -> raw key (so UI always shows something readable)
+do
+  local active = locales[GetLocale()] or {}
+  local enUS   = locales["enUS"] or {}
+  pfQuest_Loc = setmetatable(active, {
+    __index = function(tab, key)
+      -- 1) Try enUS as fallback before showing raw key
+      local fallback = enUS[key]
+      if fallback ~= nil then
+        return fallback
+      end
+      -- 2) Last resort: return the key itself (prevents nil errors)
+      return tostring(key)
+    end
+  })
+end
