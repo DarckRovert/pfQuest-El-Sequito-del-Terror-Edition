@@ -102,11 +102,13 @@ PfExtend_Global.sortKeyValueTable = function(t, sortBy, descending)
     local cmp
     if sortBy == "key" then
         cmp = function(a, b)
-            return descending and (a.key > b.key) or (a.key < b.key)
+            if descending then return a.key > b.key end
+            return a.key < b.key
         end
     else
         cmp = function(a, b)
-            return descending and (a.value > b.value) or (a.value < b.value)
+            if descending then return a.value > b.value end
+            return a.value < b.value
         end
     end
     table.sort(arr, cmp)
