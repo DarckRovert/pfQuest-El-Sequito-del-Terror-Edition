@@ -1,4 +1,4 @@
-# pfQuest [Séquito del Terror Edition] — v9.3.0 [God-Tier] 🗺️⚔️
+# pfQuest [Séquito del Terror Edition] — v9.3.1 [God-Tier] 🗺️⚔️
 
 > **Asistente de misiones con base de datos integrada para Turtle WoW.** Fork de pfQuest de Shagu, adaptado y localizado al español para el Séquito.
 
