@@ -22164,4 +22164,9 @@ pfDB["quests"]["esES"] = {
     ["O"] = "Captura la Torre de la Corona, la Torre de la Muralla del Este, la Torre del Paso Norte y la Torre del Bosque de la Peste en las Tierras de la Peste del Este. Tras hacerlo, regresa y habla con el Emisario Gormok en la Capilla de la Esperanza de la Luz.",
     ["T"] = "Fortalecimiento de nuestras defensas",
   },
+  [574] = {
+    ["D"] = "Ahora que la mayoría de sus tropas regulares se han reducido, debes enfrentarte a sus fuerzas altamente entrenadas. Cuando no están en la naturaleza masacrando a nuestros soldados rebeldes, se los puede encontrar en el fondo del complejo de Kurzen, en una cueva que llaman las Reservas.$B$BConozco personalmente a muchas de las tropas de Kurzen y sé que son hábiles, leales y crueles. Esta no es una tarea fácil que te propongo, $N.$B$BDespués de derrotarlos, informa al teniente Doren, mi oficial al mando. Él querrá tu informe de primera mano.",
+    ["O"] = "Mata a 10 comandos de Kurzen y 6 reductores de cabezas de Kurzen.$B$BInforma al teniente Doren en el campamento rebelde.",
+    ["T"] = "Fuerzas especiales",
+  },
 }

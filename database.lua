@@ -5,7 +5,8 @@ pfDatabase = { icons = {} }
 
 local loc = GetLocale()
 local dbs = { "items", "quests", "quests-itemreq", "objects", "units", "zones", "professions", "areatrigger", "refloot" }
-local noloc = { items = true, quests = true, objects = true, units = true }
+-- GRAVITY PATCH: Eliminar misiones, objetos y unidades del fallback automático forzado al inglés
+local noloc = { items = true }
 
 pfDB.locales = {
   ["enUS"] = "English",
