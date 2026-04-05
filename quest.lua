@@ -4,7 +4,7 @@ local _, _, _, client = GetBuildInfo()
 client = client or 11200
 local _G = client == 11200 and getfenv(0) or _G
 
-pfQuest = CreateFrame("Frame")
+pfQuest = pfQuest or CreateFrame("Frame")
 pfQuest.icons = {}
 
 if client >= 30300 then

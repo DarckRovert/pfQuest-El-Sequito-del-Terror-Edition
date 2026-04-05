@@ -187,10 +187,13 @@ pfQuest.route:SetScript("OnUpdate", function()
   -- save current position
   lastpos = curpos
 
-  -- update distances to player
+  -- update distances to player in Legacy Coordinate Space
   for id, data in pairs(this.coords) do
     if data[1] and data[2] then
-      local x, y = (xplayer*100 - data[1])*1.5, yplayer*100 - data[2]
+      local mapID = pfMap:GetMapID()
+      local tx, ty = data[1], data[2] -- legacy coords (from DB)
+      local px, py = pfQuest.Projections:UnApply(mapID, xplayer*100, yplayer*100) -- player back to legacy
+      local x, y = (px - tx) * pfQuest.Projections.ASPECT_RATIO, py - ty
       this.coords[id][4] = ceil(math.sqrt(x*x+y*y)*100)/100
     end
   end
@@ -351,12 +354,15 @@ pfQuest.route.arrow:SetScript("OnUpdate", function()
   -- arrow positioning stolen from TomTomVanilla.
   -- all credits to the original authors:
   -- https://github.com/cralor/TomTomVanilla
-  xDelta = (target[1] - xplayer*100)*1.5
-  yDelta = (target[2] - yplayer*100)
+  
+  -- Apply Global Coordinate Projection Layer (GCPL)
+  local mapID = pfMap:GetMapID()
+  xDelta, yDelta = pfQuest.Projections:GetGPSVector(target[1], target[2], xplayer*100, yplayer*100, mapID)
+
+  -- Angle calculation (Clockwise, North = 0)
   dir = atan2(xDelta, -(yDelta))
-  dir = dir > 0 and (math.pi*2) - dir or -dir
-  if dir < 0 then dir = dir + 360 end
-  angle = math.rad(dir)
+  angle = dir > 0 and (math.pi*2) - dir or -dir
+  if angle < 0 then angle = angle + math.pi*2 end
 
   player = pfQuestCompat.GetPlayerFacing()
   angle = angle - player

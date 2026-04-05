@@ -900,8 +900,11 @@ function pfMap:UpdateNodes()
             pfQuest.tracker.ButtonAdd(title, node)
           end
 
-          x = x / 100 * WorldMapButton:GetWidth()
-          y = y / 100 * WorldMapButton:GetHeight()
+          -- Apply Global Coordinate Projection Layer (GCPL)
+          local px, py = pfQuest.Projections:Apply(map, x, y)
+
+          x = px / 100 * WorldMapButton:GetWidth()
+          y = py / 100 * WorldMapButton:GetHeight()
 
           pfMap.pins[i]:ClearAllPoints()
           pfMap.pins[i]:SetPoint("CENTER", WorldMapButton, "TOPLEFT", x, -y)
