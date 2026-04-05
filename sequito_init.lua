@@ -28,15 +28,6 @@ init:SetScript("OnEvent", function()
               string.format("|cffffffffpfQuest %s detected. Elnazzareno guides your steps.|r", ver)
   end
   
-  -- Fix DB for esMX clients
-  if GetLocale() == "esMX" and pfDB then
-    for k, v in pairs(pfDB) do
-      if type(v) == "table" and v["esES"] then
-        v["esMX"] = v["esES"]
-      end
-    end
-  end
-
   DEFAULT_CHAT_FRAME:AddMessage(welcome)
 end)
 

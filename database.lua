@@ -4,8 +4,11 @@ local compat = pfQuestCompat
 pfDatabase = { icons = {} }
 
 local loc = GetLocale()
+-- GRAVITY PATCH: Alias temprano para clientes esMX (Latinoamérica)
+if loc == "esMX" then loc = "esES" end
+
 local dbs = { "items", "quests", "quests-itemreq", "objects", "units", "zones", "professions", "areatrigger", "refloot" }
--- GRAVITY PATCH: Removido el fallback forzado. Ahora se usa metatable dinámico.
+-- GRAVITY PATCH: Usar metatable dinámico para fallback a enUS.
 
 pfDB.locales = {
   ["enUS"] = "English",
@@ -625,6 +628,26 @@ function pfDatabase:GetIDByName(name, db, partial, server)
       end
     end
   end
+
+  -- FALLBACK: Si no hay resultados, buscar en la base de datos maestra (enUS)
+  -- Esto permite encontrar items/NPCs de Turtle WoW que aún no tienen traducción.
+  if not next(ret) then
+    for id, loc in pairs(pfDB[db]["enUS"]) do
+      if db == "quests" then loc = loc["T"] end
+
+      local custom = server and pfQuest_server[db] and pfQuest_server[db][id] or not server
+      if loc and name then
+        if partial == true and strfind(strlower(loc), strlower(name), 1, true) and custom then
+          ret[id] = loc
+        elseif partial == "LOWER" and strlower(loc) == strlower(name) and custom then
+          ret[id] = loc
+        elseif loc == name and custom then
+          ret[id] = loc
+        end
+      end
+    end
+  end
+
   return ret
 end
 
@@ -642,6 +665,18 @@ function pfDatabase:GetIDByIDPart(idPart, db)
       ret[id] = loc
     end
   end
+
+  -- FALLBACK: Si no hay resultados, buscar por ID en la base de datos maestra
+  if not next(ret) then
+    for id, loc in pairs(pfDB[db]["enUS"]) do
+      if db == "quests" then loc = loc["T"] end
+
+      if idPart and loc and strfind(tostring(id), idPart) then
+        ret[id] = loc
+      end
+    end
+  end
+
   return ret
 end
 
@@ -1609,16 +1644,37 @@ function pfDatabase:GetQuestIDs(qid)
     if quests[id] and data.T == title then tcount = tcount + 1 end
   end
 
+  -- FALLBACK: Si no hay coincidencias exactas, buscar en la base de datos maestra (enUS)
+  -- Esto es necesario porque pairs() no recorre el metatable.
+  if tcount == 0 then
+    for id, data in pairs(pfDB["quests"]["enUS"]) do
+       if quests[id] and data.T == title then tcount = tcount + 1 end
+    end
+  end
+
   -- no title was found, run levenshtein on titles
   if tcount == 0 and title then
     local tlen = string.len(title)
     local tscore, tbest, ttitle = nil, math.min(tlen/2, 5), nil
+    -- Buscar primero en la localización activa
     for id, data in pairs(pfDB["quests"]["loc"]) do
       if quests[id] and data.T then
         tscore = lev(data.T, title, tbest)
         if tscore < tbest then
           tbest = tscore
           ttitle = data.T
+        end
+      end
+    end
+    -- Si no hay éxito, buscar en enUS como último recurso
+    if not ttitle then
+      for id, data in pairs(pfDB["quests"]["enUS"]) do
+        if quests[id] and data.T then
+          tscore = lev(data.T, title, tbest)
+          if tscore < tbest then
+            tbest = tscore
+            ttitle = data.T
+          end
         end
       end
     end
