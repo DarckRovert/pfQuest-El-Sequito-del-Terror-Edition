@@ -5,8 +5,7 @@ pfDatabase = { icons = {} }
 
 local loc = GetLocale()
 local dbs = { "items", "quests", "quests-itemreq", "objects", "units", "zones", "professions", "areatrigger", "refloot" }
--- GRAVITY PATCH: Eliminar misiones, objetos y unidades del fallback automático forzado al inglés
-local noloc = { items = true }
+-- GRAVITY PATCH: Removido el fallback forzado. Ahora se usa metatable dinámico.
 
 pfDB.locales = {
   ["enUS"] = "English",
@@ -159,8 +158,17 @@ end
 -- detect localized databases
 pfDatabase.dbstring = ""
 for id, db in pairs(dbs) do
-  -- assign existing locale
-  pfDB[db]["loc"] = pfDB[db][loc] or pfDB[db]["enUS"] or {}
+  -- GRAVITY DYNAMIC FALLBACK: Usar metatable para fallback individual a enUS
+  local active_loc = pfDB[db][loc] or {}
+  local enUS_loc = pfDB[db]["enUS"] or {}
+  
+  if active_loc ~= enUS_loc then
+    setmetatable(active_loc, {
+      __index = enUS_loc
+    })
+  end
+
+  pfDB[db]["loc"] = active_loc
   pfDatabase.dbstring = pfDatabase.dbstring .. " |cffcccccc[|cffffffff" .. db .. "|cffcccccc:|cff33ffcc" .. ( pfDB[db][loc] and loc or "enUS" ) .. "|cffcccccc]"
 end
 
@@ -279,15 +287,15 @@ CreateFrame("Frame", "pfQuestLocaleCheck", UIParent):SetScript("OnUpdate", funct
     ItemRefTooltip:Hide()
 
     -- check for noloc
-    if name and name ~= "" and pfDB["items"][loc] and pfDB["items"][loc][6948] then
-      if not strfind(name, pfDB["items"][loc][6948], 1) then
-        pfDatabase.dbstring = ""
-        for id, db in pairs(dbs) do
-          -- assign existing locale and update dbstring
-          pfDB[db]["loc"] = noloc[db] and pfDB[db]["enUS"] or pfDB[db][loc] or {}
-          pfDatabase.dbstring = pfDatabase.dbstring .. " |cffcccccc[|cffffffff" .. db .. "|cffcccccc:|cff33ffcc" .. ( noloc[db] and "enUS" or loc ) .. "|cffcccccc]"
+      -- check for noloc (GRAVITY: Redefinido para no ser agresivo)
+      if name and name ~= "" and pfDB["items"][loc] and pfDB["items"][loc][6948] then
+        if not strfind(name, pfDB["items"][loc][6948], 1) then
+          pfDatabase.dbstring = ""
+          for id, db in pairs(dbs) do
+            -- assign existing locale and update dbstring (usando el fallback dinámico ya configurado)
+            pfDatabase.dbstring = pfDatabase.dbstring .. " |cffcccccc[|cffffffff" .. db .. "|cffcccccc:|cff33ffcc" .. ( pfDB[db][loc] and loc or "enUS" ) .. "|cffcccccc]"
+          end
         end
-      end
 
       pfDatabase.localized = true
       this:Hide()

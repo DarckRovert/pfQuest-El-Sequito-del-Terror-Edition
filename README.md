@@ -18,7 +18,8 @@ pfQuest es una base de datos de misiones, objetos y NPCs para Turtle WoW 1.12.1.
 - Integración con el minimapa para objetivos de misiones.
 - Base de datos de items, NPCs y objetos de Turtle WoW.
 - Escaneo de servidor para datos personalizados.
-- Localización en **español** (esMX y esES).
+- **Localización Dinámica [NEW]**: Sistema de *metatables* que garantiza fallback inteligente a inglés si no existe traducción, evitando textos vacíos.
+- **Limpieza de Base de Datos**: Eliminación de miles de prefijos obsoletos ("OLD", "Deprecated") en `esES`.
 - Integración con pfUI para interfaz unificada.
 
 ## ⚙️ Instalación
