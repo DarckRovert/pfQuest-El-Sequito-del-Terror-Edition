@@ -125,13 +125,9 @@ end
 if client <= 11200 then
   local ParseQuestLevels = function(frame, text, a1, a2, a3, a4, a5)
     if text then
-      for oldhex, questid, level in gfind(text, "(|c%x+)|Hquest:(.-):(.-)|h") do
+      for oldhex, questid in gfind(text, "(|c%x+)|Hquest:(%d+)") do
         local questid = tonumber(questid)
-        local level = tonumber(level)
-
-        if not level or level == 0 then
-          level = pfDB["quests"]["data"][questid] and pfDB["quests"]["data"][questid]["lvl"] or 0
-        end
+        local level = pfDB["quests"]["data"][questid] and pfDB["quests"]["data"][questid]["lvl"] or 0
 
         if level and level > 0 then
           local newhex = pfUI.api.rgbhex(pfQuestCompat.GetDifficultyColor(level))

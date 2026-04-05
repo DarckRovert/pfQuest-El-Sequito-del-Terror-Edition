@@ -8,7 +8,12 @@ local loc = GetLocale()
 if loc == "esMX" then loc = "esES" end
 
 local dbs = { "items", "quests", "quests-itemreq", "objects", "units", "zones", "professions", "areatrigger", "refloot" }
--- GRAVITY PATCH: Usar metatable dinámico para fallback a enUS.
+-- GRAVITY PATCH: Usar metatable dinámico para fallback a enUS en todos los módulos.
+for _, dbname in pairs(dbs) do
+  if pfDB[dbname] and pfDB[dbname][loc] and pfDB[dbname]["enUS"] then
+    setmetatable(pfDB[dbname][loc], { __index = pfDB[dbname]["enUS"] })
+  end
+end
 
 pfDB.locales = {
   ["enUS"] = "English",
@@ -1609,7 +1614,8 @@ function pfDatabase:GetQuestIDs(qid)
   if GetQuestLink then
     local questLink = GetQuestLink(qid)
       if questLink then
-      local _, _, id = strfind(questLink, "|c.*|Hquest:([%d]+):([-]?[%d]+)|h%[(.*)%]|h|r")
+      -- GRAVITY PATCH: Regex flexible para diversos formatos de enlaces (especialmente en Turtle WoW)
+      local _, _, id = strfind(questLink, "|Hquest:([%d]+)")
       if id then return { [1] = tonumber(id) } end
     end
   end
@@ -1720,11 +1726,18 @@ function pfDatabase:GetQuestIDs(qid)
       -- if multiple quests share the same name, use levenshtein algorithm,
       -- to compare quest text distances in order to estimate the best quest id
       if tcount > 1 then
-        -- check objective and calculate score
-        score = score + max(24 - lev(pfDatabase:FormatQuestText(pfDB.quests.loc[id]["O"]), objective, 24),0)
-
-        -- check description and calculate score
-        score = score + max(24 - lev(pfDatabase:FormatQuestText(pfDB.quests.loc[id]["D"]), text, 24),0)
+        -- GRAVITY PATCH: En clientes ES, si la DB tiene textos en inglés (NYI), 
+        -- el Levenshtein fallará. Solo penalizar si el texto DB no es inglés genérico.
+        local db_obj = pfDatabase:FormatQuestText(pfDB.quests.loc[id]["O"])
+        local db_desc = pfDatabase:FormatQuestText(pfDB.quests.loc[id]["D"])
+        
+        if db_obj and db_obj ~= "" and not strfind(db_obj, "NYI") then
+          score = score + max(24 - lev(db_obj, objective, 24), 0)
+        end
+        
+        if db_desc and db_desc ~= "" and not strfind(db_desc, "NYI") then
+          score = score + max(24 - lev(db_desc, text, 24), 0)
+        end
       end
 
       if score > best then best = score end
