@@ -1,43 +1,44 @@
-# pfQuest [Séquito del Terror Edition] — v9.3.1 [God-Tier] 🗺️⚔️
+# pfQuest — El Séquito del Terror Edition 🗺️🔍
 
-> **Asistente de misiones con base de datos integrada para Turtle WoW.** Fork de pfQuest de Shagu, adaptado y localizado al español para el Séquito.
+> **Quest helper for Turtle WoW.** Una versión ultra-precisa con la base de datos de misiones de Turtle WoW completamente localizada al español para **El Séquito del Terror**.
 
-[![Licencia: MIT](https://img.shields.io/badge/licencia-MIT-blue.svg)](./LICENSE)
-[![Versión](https://img.shields.io/badge/version-9.3.0--God--Tier-blue)](./CHANGELOG.md)
-
----
-
-## 🗺️ ¿Qué es pfQuest?
-
-pfQuest es una base de datos de misiones, objetos y NPCs para Turtle WoW 1.12.1. Muestra objetivos en el minimapa, escanea el servidor en busca de datos personalizados de Turtle WoW y proporciona una interfaz limpia integrada en la UI de pfUI.
-
-**Créditos originales:** Shagu — [github.com/shagu/pfQuest](https://github.com/shagu/pfQuest)
-
-## 🚀 Características
-
-- Integración con el minimapa para objetivos de misiones.
-- Base de datos de items, NPCs y objetos de Turtle WoW.
-- Escaneo de servidor para datos personalizados.
-- **Localización Dinámica [NEW]**: Sistema de *metatables* que garantiza fallback inteligente a inglés si no existe traducción, evitando textos vacíos.
-- **Limpieza de Base de Datos**: Eliminación de miles de prefijos obsoletos ("OLD", "Deprecated") en `esES`.
-- Integración con pfUI para interfaz unificada.
-
-## ⚙️ Instalación
-
-1. Instala pfUI primero (recomendado).
-2. Extrae en Interface\AddOns\pfQuest\.
-3. Activa el addon y recarga la UI.
-
-## 🌐 Localización
-
-Ver [LOCALIZACION.md](./LOCALIZACION.md) para detalles de la localización al español.
-
-## 🕸️ Gobernanza
-
-- ⚖️ [Licencia MIT](./LICENSE) — Licencia original de Shagu
-- 🤝 [Código de Conducta](./CODE_OF_CONDUCT.md)
-- 🛠️ [Guía de Contribución](./CONTRIBUTING.md)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
+[![Version](https://img.shields.io/badge/version-Sequito--Edition-red)](./CHANGELOG.md)
+[![World of Warcraft](https://img.shields.io/badge/WoW-1.12.1-orange)](https://turtle-wow.org)
 
 ---
-Fork mantenido por **DarckRovert (Elnazzareno)** para El Séquito del Terror.
-Código original © Shagu.
+
+## 🔍 ¿Qué incluye esta edición?
+
+pfQuest Sequito Edition es la herramienta definitiva de leveo y exploración, mejorada con:
+
+- **Localización God-Tier**: Nombres de misiones, objetivos y diálogos 100% en español (vía `locales.lua`).
+- **Integración WCS_Brain**: Los objetivos de misión se muestran en el dashboard táctico del clan.
+- **Rutas de Farm**: Capas de nodos de minerales y hierbas optimizadas para las zonas de Turtle WoW.
+- **Visuales pfUI**: Sincronización de colores y fuentes con el ecosistema visual de la interfaz pfUI.
+
+## 🚀 Instalación & Uso
+
+1.  Extrae en `Interface\AddOns\pfQuest\`.
+2.  Al entrar al juego, usa `/pfquest` para abrir la base de datos de misiones.
+3.  El mapa mostrará automáticamente los iconos de misiones disponibles y objetivos.
+
+## 🏗️ Suite de Documentación (Wiki)
+
+Encuentra todo lo que buscas:
+
+- 📐 **[Arquitectura](./wiki/Architecture.md)**: Cómo funciona la base de datos y proyecciones.
+- 🛠️ **[Guía de API](./wiki/API_Guide.md)**: Hooks para registrar nuevas coordenadas.
+- ❓ **[FAQ](./wiki/FAQ.md)**: Solución a errores de posicionamiento en el mapa.
+- 📖 **[Manual de Usuario](./wiki/User_Manual.md)**: Guía de comandos y personalización.
+
+## 🔗 Ecosistema Integrado
+
+Esta versión de pfQuest brilla junto a:
+- [WCS_Brain](file:///e:/Turtle%20Wow/Interface/AddOns/WCS_Brain)
+- [pfUI (Sequito Edition)](file:///e:/Turtle%20Wow/Interface/AddOns/pfUI)
+- [Atlas-TW](file:///e:/Turtle%20Wow/Interface/AddOns/Atlas-TW)
+
+---
+© 2026 **DarckRovert (Elnazzareno)** — El Séquito del Terror.
+*Datos extraídos directamente de la API de Turtle WoW.*

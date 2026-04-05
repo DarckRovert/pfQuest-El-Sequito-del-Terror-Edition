@@ -1,14 +1,13 @@
-# Contribuyendo a El Séquito del Terror
+# Contributing to pfQuest (El Séquito Edition)
 
-¡Gracias por tu interés en potenciar nuestro arsenal!
+Este es un fork especializado con la base de datos de misiones de Turtle WoW.
 
-## Cómo contribuir
-1. Haz un fork del repositorio.
-2. Crea una rama para tu mejora (git checkout -b feature/mejora).
-3. Envía tus cambios vía Pull Request.
+## Reglas de Datos
+1. **Localización**: Todas las traducciones deben ingresarse en `locales.lua`. No modificar el núcleo `quest.lua`.
+2. **Proyecciones**: Cualquier nueva coordenada debe validarse con `projections.lua`.
 
 ## Estándares
-- Compatibilidad total con **Turtle WoW (Lua 5.0)**.
-- Documentación clara en los commits.
+- **Lua 5.0**: Evitar operadores modernos.
 
-Lee nuestro [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) antes de empezar.
+---
+© 2026 **DarckRovert**.
