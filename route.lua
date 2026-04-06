@@ -128,9 +128,12 @@ local function DrawLine(path,x,y,nx,ny,hl,minimap)
   end
 end
 
-pfQuest.route = CreateFrame("Frame", "pfQuestRoute", WorldFrame)
+pfQuest.route = pfQuest.route or CreateFrame("Frame", "pfQuestRoute", WorldFrame)
 pfQuest.route.firstnode = nil
 pfQuest.route.coords = {}
+pfQuest.route.activeQuest = nil
+pfQuest.route.lockX = nil
+pfQuest.route.lockY = nil
 
 pfQuest.route.Reset = function(self)
   self.coords = {}
@@ -138,8 +141,35 @@ pfQuest.route.Reset = function(self)
 end
 
 pfQuest.route.AddPoint = function(self, tbl)
-  table.insert(self.coords, tbl)
+  if self.lockX and self.lockY and tbl[1] == self.lockX and tbl[2] == self.lockY then
+    table.insert(self.coords, 1, tbl)
+  else
+    table.insert(self.coords, tbl)
+  end
   self.firstnode = nil
+end
+
+function pfQuest.route:LockToQuest(title)
+  if not title then return end
+  self.activeQuest = title
+  self.lockX, self.lockY = nil, nil
+  
+  local nearest = nil
+  local bestX, bestY = nil, nil
+  
+  -- recalculate nearest of THIS quest in current coords list
+  if self.coords then
+    for id, data in pairs(self.coords) do
+      if data[3].title == title and data[4] then
+         if not nearest or data[4] < nearest then
+            nearest = data[4]
+            bestX, bestY = data[1], data[2]
+         end
+      end
+    end
+  end
+  
+  self.lockX, self.lockY = bestX, bestY
 end
 
 local targetTitle, targetCluster, targetLayer, targetTexture = nil, nil, nil, nil
@@ -160,6 +190,22 @@ end
 
 pfQuest.route.IsTarget = function(node)
   if node then
+    -- Priority 1: Locked Coordinates (Sticky Target)
+    if pfQuest.route.lockX and pfQuest.route.lockY then
+      if node.x == pfQuest.route.lockX and node.y == pfQuest.route.lockY then
+        return true
+      end
+      -- if we are locked to a specific point, don't fallback to other points of same quest
+      -- unless they are identical (which shouldn't happen)
+      return nil
+    end
+
+    -- Priority 2: Active Quest (Manual Selection)
+    if pfQuest.route.activeQuest and pfQuest.route.activeQuest == node.title then
+      return true
+    end
+
+    -- Priority 3: Custom Map Target (Classic Map Click)
     if targetTitle and targetTitle == node.title
       and targetCluster == node.cluster
       and targetLayer == node.layer
@@ -172,7 +218,18 @@ pfQuest.route.IsTarget = function(node)
 end
 
 local lastpos, completed = 0, 0
-local function sortfunc(a,b) return a[4] < b[4] end
+local function sortfunc(a,b)
+  if pfQuest.route and pfQuest.route.IsTarget then
+    local ta = pfQuest.route.IsTarget(a[3])
+    local tb = pfQuest.route.IsTarget(b[3])
+
+    if ta and not tb then return true end
+    if tb and not ta then return false end
+  end
+
+  return a[4] < b[4]
+end
+
 pfQuest.route:SetScript("OnUpdate", function()
   local xplayer, yplayer = GetPlayerMapPosition("player")
   local wrongmap = xplayer == 0 and yplayer == 0 and true or nil
@@ -198,35 +255,13 @@ pfQuest.route:SetScript("OnUpdate", function()
     end
   end
 
-  -- sort all coords by distance only once per second
+  -- sort all coords by distance (and target priority) only once per second
   if not this.recalculate or this.recalculate < GetTime() then
     table.sort(this.coords, sortfunc)
 
-    -- order list on custom targets
-    if targetTitle and this.coords[1] and not pfQuest.route.IsTarget(this.coords[1][3]) then
-      local target = nil
-
-      -- check for the old index of the target
-      for id, data in pairs(this.coords) do
-        if pfQuest.route.IsTarget(data[3]) then
-          target = id
-          break
-        end
-      end
-
-      -- rearrange coordinates
-      if target then
-        local tmp = {}
-        table.insert(tmp, this.coords[target])
-
-        for id, data in pairs(this.coords) do
-          if id ~= target then
-            table.insert(tmp, this.coords[id])
-          end
-        end
-
-        this.coords = tmp
-      end
+    -- clear lock if reached (within 5 yards)
+    if this.lockX and this.coords[1] and this.coords[1][4] and this.coords[1][4] < 5 then
+      this.lockX, this.lockY = nil, nil
     end
 
     this.recalculate = GetTime() + 1

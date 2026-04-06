@@ -229,23 +229,27 @@ end
 
 function tracker.ButtonUpdate()
   local alpha = tonumber((pfQuest_config["trackeralpha"] or .2)) or .2
-
-  if not this.alpha or this.alpha ~= alpha then
-    this.bg:SetTexture(0,0,0,alpha)
-    this.bg:SetAlpha(alpha)
-    this.alpha = alpha
+  local state = 0 -- 0: normal, 1: hover, 2: active
+  
+  if pfQuest.route.activeQuest and pfQuest.route.activeQuest == this.title then
+    state = 2
+  elseif pfMap.highlight and pfMap.highlight == this.title then
+    state = 1
   end
 
-  if pfMap.highlight and pfMap.highlight == this.title then
-    if not this.highlight then
-      this.bg:SetTexture(1,1,1,math.max(.2, alpha))
-      this.bg:SetAlpha(math.max(.5, alpha))
-      this.highlight = true
+  if this.state ~= state or this.alpha ~= alpha then
+    if state == 2 then
+      this.bg:SetTexture(0, .6, 1, .4)
+      this.bg:SetAlpha(.8)
+    elseif state == 1 then
+      this.bg:SetTexture(1, 1, 1, .2)
+      this.bg:SetAlpha(.6)
+    else
+      this.bg:SetTexture(0, 0, 0, alpha)
+      this.bg:SetAlpha(alpha)
     end
-  elseif this.highlight then
-    this.bg:SetTexture(0,0,0,alpha)
-    this.bg:SetAlpha(alpha)
-    this.highlight = nil
+    this.state = state
+    this.alpha = alpha
   end
 end
 
@@ -286,9 +290,11 @@ function tracker.ButtonClick()
     pfQuest_colors[this.title] = { pfMap.str2rgb(this.title .. GetTime()) }
     pfMap:UpdateNodes()
   elseif expand_states[this.title] == 0 then
+    pfQuest.route:LockToQuest(this.title)
     expand_states[this.title] = 1
     tracker.ButtonEvent(this)
   elseif expand_states[this.title] == 1 then
+    pfQuest.route:LockToQuest(this.title)
     expand_states[this.title] = 0
     tracker.ButtonEvent(this)
   end

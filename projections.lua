@@ -17,6 +17,8 @@ pfQuest.Projections = {
 
 function pfQuest.Projections:Apply(mapID, x, y)
   if not x or not y then return x, y end
+  x, y = tonumber(x), tonumber(y)
+  if not x or not y then return x, y end
   
   -- Apply specific map corrections (Legacy -> Visual)
   local config = self.MAP_CONFIG[tonumber(mapID)]
@@ -33,6 +35,8 @@ function pfQuest.Projections:Apply(mapID, x, y)
 end
 
 function pfQuest.Projections:UnApply(mapID, x, y)
+  if not x or not y then return x, y end
+  x, y = tonumber(x), tonumber(y)
   if not x or not y then return x, y end
   
   -- Reverse specific map corrections (Visual -> Legacy)

@@ -434,10 +434,10 @@ function pfQuest:AddQuestLogIntegration()
   end)
 
   pfQuest.buttonShow = pfQuest.buttonShow or CreateFrame("Button", "pfQuestShow", dockFrame, "UIPanelButtonTemplate")
-  pfQuest.buttonShow:SetWidth(70)
+  pfQuest.buttonShow:SetWidth(60)
   pfQuest.buttonShow:SetHeight(20)
   pfQuest.buttonShow:SetText(pfQuest_Loc["Show"])
-  pfQuest.buttonShow:SetPoint("TOP", dockTitle, "TOP", -110, 0)
+  pfQuest.buttonShow:SetPoint("TOP", dockTitle, "TOP", -120, 0)
   pfQuest.buttonShow:SetScript("OnClick", function()
     local questIndex = GetQuestLogSelection()
     local questids = pfDatabase:GetQuestIDs(questIndex)
@@ -450,11 +450,37 @@ function pfQuest:AddQuestLogIntegration()
     pfMap:ShowMapID(pfDatabase:GetBestMap(maps))
   end)
 
+  pfQuest.buttonTarget = pfQuest.buttonTarget or CreateFrame("Button", "pfQuestTarget", dockFrame, "UIPanelButtonTemplate")
+  pfQuest.buttonTarget:SetWidth(60)
+  pfQuest.buttonTarget:SetHeight(20)
+  pfQuest.buttonTarget:SetText(pfQuest_Loc["Arrow"] or "Arrow")
+  pfQuest.buttonTarget:SetPoint("TOP", dockTitle, "TOP", -60, 0)
+  pfQuest.buttonTarget:SetScript("OnClick", function()
+    local questIndex = GetQuestLogSelection()
+    local title, _, _, header, _, complete = compat.GetQuestLogTitle(questIndex)
+    if header or not title then return end
+
+    -- Trigger Show
+    local questids = pfDatabase:GetQuestIDs(questIndex)
+    local id = questids and tonumber(questids[1])
+    if id then
+      local maps, meta = {}, { ["addon"] = "PFQUEST", ["qlogid"] = questIndex }
+      maps = pfDatabase:SearchQuestID(id, meta, maps)
+      pfMap:ShowMapID(pfDatabase:GetBestMap(maps))
+    end
+
+    -- Trigger Arrow Lock
+    if pfQuest.route and pfQuest.route.LockToQuest then
+      pfQuest.route:LockToQuest(title)
+      pfMap:UpdateNodes()
+    end
+  end)
+
   pfQuest.buttonHide = pfQuest.buttonHide or CreateFrame("Button", "pfQuestHide", dockFrame, "UIPanelButtonTemplate")
-  pfQuest.buttonHide:SetWidth(70)
+  pfQuest.buttonHide:SetWidth(60)
   pfQuest.buttonHide:SetHeight(20)
   pfQuest.buttonHide:SetText(pfQuest_Loc["Hide"])
-  pfQuest.buttonHide:SetPoint("TOP", dockTitle, "TOP", -37, 0)
+  pfQuest.buttonHide:SetPoint("TOP", dockTitle, "TOP", 0, 0)
   pfQuest.buttonHide:SetScript("OnClick", function()
     local questIndex = GetQuestLogSelection()
     local title, _, _, header, _, complete = compat.GetQuestLogTitle(questIndex)
@@ -464,19 +490,19 @@ function pfQuest:AddQuestLogIntegration()
   end)
 
   pfQuest.buttonClean = pfQuest.buttonClean or CreateFrame("Button", "pfQuestClean", dockFrame, "UIPanelButtonTemplate")
-  pfQuest.buttonClean:SetWidth(70)
+  pfQuest.buttonClean:SetWidth(60)
   pfQuest.buttonClean:SetHeight(20)
   pfQuest.buttonClean:SetText(pfQuest_Loc["Clean"])
-  pfQuest.buttonClean:SetPoint("TOP", dockTitle, "TOP", 37, 0)
+  pfQuest.buttonClean:SetPoint("TOP", dockTitle, "TOP", 60, 0)
   pfQuest.buttonClean:SetScript("OnClick", function()
     pfMap:DeleteNode("PFQUEST")
   end)
 
   pfQuest.buttonReset = pfQuest.buttonReset or CreateFrame("Button", "pfQuestReset", dockFrame, "UIPanelButtonTemplate")
-  pfQuest.buttonReset:SetWidth(70)
+  pfQuest.buttonReset:SetWidth(60)
   pfQuest.buttonReset:SetHeight(20)
   pfQuest.buttonReset:SetText(pfQuest_Loc["Reset"])
-  pfQuest.buttonReset:SetPoint("TOP", dockTitle, "TOP", 110, 0)
+  pfQuest.buttonReset:SetPoint("TOP", dockTitle, "TOP", 120, 0)
   pfQuest.buttonReset:SetScript("OnClick", function()
     pfQuest:ResetAll()
   end)
@@ -484,9 +510,39 @@ function pfQuest:AddQuestLogIntegration()
   -- use pfUI buttons in native mode
   if not pfUI.api.emulated then
     pfUI.api.SkinButton(pfQuest.buttonShow)
+    pfUI.api.SkinButton(pfQuest.buttonTarget)
     pfUI.api.SkinButton(pfQuest.buttonHide)
     pfUI.api.SkinButton(pfQuest.buttonClean)
     pfUI.api.SkinButton(pfQuest.buttonReset)
+  end
+
+  -- hook quest selection to lock navigation arrow
+  local _SelectQuestLogEntry = SelectQuestLogEntry
+  local pfQuestLogLock = nil
+  SelectQuestLogEntry = function(id)
+    if pfQuestLogLock then
+      if _SelectQuestLogEntry then _SelectQuestLogEntry(id) end
+      return
+    end
+
+    pfQuestLogLock = true
+    if _SelectQuestLogEntry then _SelectQuestLogEntry(id) end
+
+    local title, _, _, _, _, _ = compat.GetQuestLogTitle(id)
+    if title and pfQuest.route and pfQuest.route.LockToQuest then
+      -- SILENT TRACKING: Only load nodes into background, don't open Map Frame
+      local questids = pfDatabase:GetQuestIDs(id)
+      local qid = questids and tonumber(questids[1])
+      if qid then
+        local maps, meta = {}, { ["addon"] = "PFQUEST", ["qlogid"] = id }
+        maps = pfDatabase:SearchQuestID(qid, meta, maps)
+        -- pfMap:ShowMapID(pfDatabase:GetBestMap(maps)) <-- REMOVED: This was too invasive
+      end
+
+      pfQuest.route:LockToQuest(title)
+      pfMap:UpdateNodes()
+    end
+    pfQuestLogLock = nil
   end
 end
 

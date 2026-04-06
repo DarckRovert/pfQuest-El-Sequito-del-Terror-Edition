@@ -8,12 +8,6 @@ local loc = GetLocale()
 if loc == "esMX" then loc = "esES" end
 
 local dbs = { "items", "quests", "quests-itemreq", "objects", "units", "zones", "professions", "areatrigger", "refloot" }
--- GRAVITY PATCH: Usar metatable dinámico para fallback a enUS en todos los módulos.
-for _, dbname in pairs(dbs) do
-  if pfDB[dbname] and pfDB[dbname][loc] and pfDB[dbname]["enUS"] then
-    setmetatable(pfDB[dbname][loc], { __index = pfDB[dbname]["enUS"] })
-  end
-end
 
 pfDB.locales = {
   ["enUS"] = "English",
