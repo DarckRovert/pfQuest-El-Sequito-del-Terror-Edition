@@ -1,20 +1,24 @@
 ---
-name: Petición de Funcionalidad / Mejora
-about: Sugerir una idea para pfQuest [Séquito Edition]
-title: '[MEJORA] '
-labels: enhancement
-assignees: DarckRovert
+name: "🚀 Feature Request — El Séquito (pfQuest)"
+about: "Propón una nueva mejora para pfQuest"
+title: "[FEATURE] Breve título de la función"
+labels: ["enhancement", "proposal"]
+assignees: darckrovert
 
 ---
 
-**Sugerencia de Mejora**
-¿Qué te gustaría que hiciéramos?
+## 🎯 Objetivo de la Función
+Describe de forma técnica qué problema soluciona o qué valor añade a la experiencia de misiones.
 
-**Razón Técnica**
-¿Por qué sería útil para el Séquito?
+## 🛠️ Lógica Técnica Propuesta
+- **Módulo**: [ej: quest.lua, tracker.lua]
+- **Hooks**: [ej: QUEST_COMPLETE]
+- **Impacto**: Indica si el cambio tiene impacto en el uso de memoria o en la latencia del mapa.
 
-**Contexto Adicional**
-Cualquier otro detalle sobre la petición.
+## 📐 Criterios de Aceptación
+1.  Debe funcionar en [ej: Turtle WoW zones].
+2.  Debe ser [ej: Lag-Free compatible].
+3.  No debe causar [ej: Stuttering de OnUpdate].
 
 ---
-© 2026 DarckRovert
+© 2026 **DarckRovert** — El Séquito del Terror.

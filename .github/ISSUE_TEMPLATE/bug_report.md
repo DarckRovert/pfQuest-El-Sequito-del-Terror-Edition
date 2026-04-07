@@ -1,34 +1,34 @@
 ---
-name: Bug Report
-about: Create a report to help us improve the Séquito Edition
-title: '[BUG] '
-labels: bug
-assignees: DarckRovert
+name: "🐞 Bug Report — El Séquito (pfQuest)"
+about: "Reporta un error técnico en pfQuest v9.4.0+"
+title: "[BUG] Descripción breve del problema"
+labels: ["bug", "triage"]
+assignees: darckrovert
 
 ---
 
-**Descripción del Error**
-Una descripción clara y concisa de lo que está sucediendo.
+## 📝 Descripción del Problema
+Describe de manera directa y técnica qué está sucediendo. No uses relleno.
 
-**Pasos para Reproducir**
-1. Ve a '...'
-2. Haz clic en '....'
-3. Desplázate hacia abajo hasta '....'
-4. Ver el error
+## 🚀 Pasos para Reproducir
+1.  Entrar al juego con **pfQuest (Sequito Edition)**.
+2.  Realizar la acción: [ej: Hacer click en una misión del tracker].
+3.  Observar el error: [ej: Stuttering de FPS o LUA Error].
 
-**Comportamiento Esperado**
-Una descripción clara y concisa de lo que esperabas que sucediera.
+## 📊 Entorno Técnico
+- **Versión de pfQuest**: [v9.4.0 Lag-Free]
+- **Cliente**: Turtle WoW v1.12.1
+- **AddOns en conflicto**: [ej: Carbonite, Cartographer]
 
-**Capturas de Pantalla**
-Si es posible, añade capturas de pantalla para ayudar a explicar el problema.
+## 📁 Logs (pfQuest Debug)
+Pega aquí el contenido de los errores de LUA completo (si usas Swatter o similar).
 
-**Información del Cliente**
-- Servidor: Turtle WoW
-- Idioma: (esES / enUS / etc)
-- Otras misiones activas:
+```lua
+-- PEGA EL ERROR AQUÍ
+```
 
-**Logs de Error**
-Si tienes instalada alguna herramienta como `Swatter` o `ImprovedErrorFrame`, pega aquí el log de error completo.
+## 📸 Evidencia Visual
+Adjunta capturas de pantalla si el problema es de iconos mal posicionados o errores gráficos.
 
 ---
-© 2026 DarckRovert
+© 2026 **DarckRovert** — El Séquito del Terror.

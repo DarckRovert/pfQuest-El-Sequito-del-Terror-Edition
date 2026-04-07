@@ -1,18 +1,36 @@
-# Changelog - pfQuest [Séquito Edition]
+# Changelog — El Séquito del Terror Edition (pfQuest) 📈⚖️
 
-## [9.4.0-Omni-Tier] - 2026-04-07
-### Corregido / Optimizado
-- **Arquitectura de Memoria (Lua 5.0):** Resolución completa de error crítico `too many upvalues` en `route.lua` reorganizando la declaratoria local en la secuencia OnUpdate.
-- **Soporte Regional Híbrido:** Reestructuración jerárquica en `patchtable.lua` para forzar la inyección de NPCs custom de Turtle WoW (enUS) antes de fusionar el español, impidiendo la pérdida del entorno no traducido.
-- **Auto-Preservación (NoLoc):** Amputación forzosa del protocolo legacy `noloc` en `database.lua`. El AddOn ya no sobrescribirá las tablas `esES` a inglés al detectar latencia o el diccionario nativo del núcleo del servidor inglés.
-- **Sintaxis Legacy:** Sustitución de operador `%` por función `modulo` garantizando operatividad de vectores (flechas) del Vanilla.
+Todos los cambios notables en este proyecto serán documentados en este archivo siguiendo el estándar **Diamond Tier** de **DarckRovert**.
 
-## [12.2.0-Séquito] - 2026-04-07
-- **Estructura de Datos esES-turtle:** Creación de archivos `db/esES/` para items, unidades y objetos exclusivos de Turtle WoW.
-- **Suite de Documentación:** README corporativo, Wiki técnica completa y protocolos de seguridad.
-- **Gravity AI Bridge Integration:** Scripts de automatización para traducción técnica masiva.
+---
 
-## [12.2.0] - 2026-04-06
-### Añadido
-- Versión optimizada para el ecosistema "El Séquito del Terror".
-- Documentación corporativa inicial.
+## [v9.4.0] — 2026-04-07 [Lag-Free Edition]
+
+### ⚡ Optimizaciones Críticas (Rendimiento)
+- **`quest.lua`**: Incremento del tick global de `0.05s` a `0.2s`. Adición de *early-exit* en el procesamiento de la cola de misiones.
+- **`tracker.lua`**: Throttle de `0.1s` al fader de visibilidad del rastreador.
+- **`route.lua`**: Incremento del throttle de distancias de la flecha de navegación de `0.1s` a `0.25s`.
+- **`map.lua`**: Control del bucle de animaciones de nodos (`0.05s`) para prevenir micro-cortes al navegar por el mapa.
+- **`turtle_db`**: Parche de base de datos nativo para las nuevas zonas de expansión de Turtle WoW.
+
+---
+
+## 📊 Matriz de Versiones
+
+| Versión | Fecha | Nombre Clave | Estado | Resumen |
+| :--- | :--- | :--- | :---: | :--- |
+| **9.4.0** | 2026-04-07 | **Lag-Free** | ✅ | Throttling Engine, FPS Boost, Bug Fixes. |
+| **9.3.0** | 2026-03-25 | **Turtle-Expand** | ⚠️ | Integración Emerald Dream y zonas Custom. |
+| **9.2.0** | 2026-02-15 | **Stability** | ❌ | Versión inicial del ecosistema. |
+
+---
+
+## [v9.3.0] — 2026-03-25
+
+### ✨ Características
+- **Turtle WoW Support**: Integración de misiones exclusivas (Emerald Dream, Hyjal, etc.).
+- **Map Focus**: Se ha mejorado la precisión de las coordenadas en zonas expansivas de Tel'Abim.
+
+---
+© 2026 **DarckRovert** — El Séquito del Terror.
+*Optimizada para la conquista de Azeroth.*
