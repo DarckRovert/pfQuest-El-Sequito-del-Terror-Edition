@@ -1,9 +1,9 @@
-# pfQuest — Optimized Edition (v9.4.0 [Lag-Free]) 🧪🕵️
+# pfQuest — Turtle WoW Edition (v5.3.2 [Lag-Free]) 📍🗺️
 
 > **The most powerful questing engine for World of Warcraft (Vanilla/Turtle).** Intervenido quirúrgicamente por **DarckRovert** para eliminar el lag y micro-cortes en el motor de renderizado de **El Séquito del Terror**.
 
 [![License: GPL](https://img.shields.io/badge/License-GPL-blue.svg)](./LICENSE)
-[![Version](https://img.shields.io/badge/version-v9.4.0--Lag--Free-green)](./CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-v5.3.2--Lag--Free-green)](./CHANGELOG.md)
 [![World of Warcraft](https://img.shields.io/badge/WoW-1.12.1--Turtle-orange)](https://turtle-wow.org)
 [![Support](https://img.shields.io/badge/Support-Ko--fi-blue)](https://ko-fi.com/darckrovert)
 

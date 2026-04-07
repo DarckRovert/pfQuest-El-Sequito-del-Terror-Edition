@@ -4,7 +4,7 @@ Todos los cambios notables en este proyecto serán documentados en este archivo 
 
 ---
 
-## [v9.4.0] — 2026-04-07 [Lag-Free Edition]
+## [v5.3.2] — 2026-04-07 [Lag-Free Edition]
 
 ### ⚡ Optimizaciones Críticas (Rendimiento)
 - **`quest.lua`**: Incremento del tick global de `0.05s` a `0.2s`. Adición de *early-exit* en el procesamiento de la cola de misiones.
@@ -19,7 +19,7 @@ Todos los cambios notables en este proyecto serán documentados en este archivo 
 
 | Versión | Fecha | Nombre Clave | Estado | Resumen |
 | :--- | :--- | :--- | :---: | :--- |
-| **9.4.0** | 2026-04-07 | **Lag-Free** | ✅ | Throttling Engine, FPS Boost, Bug Fixes. |
+| **5.3.2** | 2026-04-07 | **Lag-Free** | ✅ | Throttling Engine, FPS Boost, Bug Fixes. |
 | **9.3.0** | 2026-03-25 | **Turtle-Expand** | ⚠️ | Integración Emerald Dream y zonas Custom. |
 | **9.2.0** | 2026-02-15 | **Stability** | ❌ | Versión inicial del ecosistema. |
 

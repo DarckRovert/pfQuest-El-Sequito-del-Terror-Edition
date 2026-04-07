@@ -1,12 +1,3 @@
--- Performance: cache globals
-local pairs, ipairs, next = pairs, ipairs, next
-local floor, ceil, sqrt, abs = math.floor, math.ceil, math.sqrt, math.abs
-local min, max, pi = math.min, math.max, math.pi
-local atan2 = math.atan2 or function(y, x) return math.atan(y, x) end
-local GetTime = GetTime
-local GetPlayerMapPosition = GetPlayerMapPosition
-local tostring, tonumber = tostring, tonumber
-
 -- table.getn doesn't return sizes on tables that
 -- are using a named index on which setn is not updated
 local function tablesize(tbl)
@@ -137,18 +128,9 @@ local function DrawLine(path,x,y,nx,ny,hl,minimap)
   end
 end
 
-pfQuest.route = pfQuest.route or CreateFrame("Frame", "pfQuestRoute", WorldFrame)
+pfQuest.route = CreateFrame("Frame", "pfQuestRoute", WorldFrame)
 pfQuest.route.firstnode = nil
 pfQuest.route.coords = {}
-pfQuest.route.activeQuest = nil
-pfQuest.route.lockX = nil
-pfQuest.route.lockY = nil
-
--- Cache de proyeccion por frame: evita recalcular UnApply en cada tick de la flecha
-pfQuest.route._proj_frame = 0
-pfQuest.route._proj_px    = 0
-pfQuest.route._proj_py    = 0
-pfQuest.route._proj_mapID = 0
 
 pfQuest.route.Reset = function(self)
   self.coords = {}
@@ -156,35 +138,8 @@ pfQuest.route.Reset = function(self)
 end
 
 pfQuest.route.AddPoint = function(self, tbl)
-  if self.lockX and self.lockY and tbl[1] == self.lockX and tbl[2] == self.lockY then
-    table.insert(self.coords, 1, tbl)
-  else
-    table.insert(self.coords, tbl)
-  end
+  table.insert(self.coords, tbl)
   self.firstnode = nil
-end
-
-function pfQuest.route:LockToQuest(title)
-  if not title then return end
-  self.activeQuest = title
-  self.lockX, self.lockY = nil, nil
-  
-  local nearest = nil
-  local bestX, bestY = nil, nil
-  
-  -- recalculate nearest of THIS quest in current coords list
-  if self.coords then
-    for id, data in pairs(self.coords) do
-      if data[3].title == title and data[4] then
-         if not nearest or data[4] < nearest then
-            nearest = data[4]
-            bestX, bestY = data[1], data[2]
-         end
-      end
-    end
-  end
-  
-  self.lockX, self.lockY = bestX, bestY
 end
 
 local targetTitle, targetCluster, targetLayer, targetTexture = nil, nil, nil, nil
@@ -205,22 +160,6 @@ end
 
 pfQuest.route.IsTarget = function(node)
   if node then
-    -- Priority 1: Locked Coordinates (Sticky Target)
-    if pfQuest.route.lockX and pfQuest.route.lockY then
-      if node.x == pfQuest.route.lockX and node.y == pfQuest.route.lockY then
-        return true
-      end
-      -- if we are locked to a specific point, don't fallback to other points of same quest
-      -- unless they are identical (which shouldn't happen)
-      return nil
-    end
-
-    -- Priority 2: Active Quest (Manual Selection)
-    if pfQuest.route.activeQuest and pfQuest.route.activeQuest == node.title then
-      return true
-    end
-
-    -- Priority 3: Custom Map Target (Classic Map Click)
     if targetTitle and targetTitle == node.title
       and targetCluster == node.cluster
       and targetLayer == node.layer
@@ -233,71 +172,69 @@ pfQuest.route.IsTarget = function(node)
 end
 
 local lastpos, completed = 0, 0
-
-local function sortfunc(a, b)
-  if pfQuest.route and pfQuest.route.IsTarget then
-    local ta = pfQuest.route.IsTarget(a[3])
-    local tb = pfQuest.route.IsTarget(b[3])
-    if ta and not tb then return true end
-    if tb and not ta then return false end
-  end
-  if not a[4] then return false end
-  if not b[4] then return true end
-  return a[4] < b[4]
-end
-
+local function sortfunc(a,b) return a[4] < b[4] end
 pfQuest.route:SetScript("OnUpdate", function()
-  -- Salida temprana si no hay coordenadas en memoria (Lag Fix)
-  if not next(this.coords) then return end
-
   local xplayer, yplayer = GetPlayerMapPosition("player")
+  local wrongmap = xplayer == 0 and yplayer == 0 and true or nil
   local curpos = xplayer + yplayer
 
-  -- Throttle: update distances max once per 0.25s (antes 0.1s), and only on position change
-  local now = GetTime()
-  if (this.throttle or 0) > now and lastpos == curpos then return end
-  this.throttle = now + 0.25
+  -- limit distance and route updates to once per .1 seconds
+  if ( this.tick or 5) > GetTime() and lastpos == curpos then return else this.tick = GetTime() + 1 end
+
+  -- limit to a maxium of each .05 seconds even on position change
+  if ( this.throttle or .2) > GetTime() then return else this.throttle = GetTime() + .05 end
+
+  -- save current position
   lastpos = curpos
 
-  -- update distances to player in Legacy Coordinate Space
-  local mapID = pfMap:GetMapID()
-  local proj_px, proj_py = pfQuest.Projections:UnApply(mapID, xplayer * 100, yplayer * 100)
-  local AR = pfQuest.Projections.ASPECT_RATIO
-
-  -- cache projected player position for arrow OnUpdate (avoids duplicate UnApply call)
-  this._proj_px    = proj_px
-  this._proj_py    = proj_py
-  this._proj_mapID = mapID
-  this._proj_frame = now
-
+  -- update distances to player
   for id, data in pairs(this.coords) do
     if data[1] and data[2] then
-      local tx, ty = data[1], data[2]
-      local dx = (proj_px - tx) * AR
-      local dy = proj_py - ty
-      this.coords[id][4] = ceil(sqrt(dx * dx + dy * dy) * 100) / 100
+      local x, y = (xplayer*100 - data[1])*1.5, yplayer*100 - data[2]
+      this.coords[id][4] = ceil(math.sqrt(x*x+y*y)*100)/100
     end
   end
 
-  -- sort all coords by distance (and target priority) once per second
-  if not this.recalculate or this.recalculate < now then
+  -- sort all coords by distance only once per second
+  if not this.recalculate or this.recalculate < GetTime() then
     table.sort(this.coords, sortfunc)
 
-    -- clear lock if reached (within 5 yards)
-    if this.lockX and this.coords[1] and this.coords[1][4] and this.coords[1][4] < 5 then
-      this.lockX, this.lockY = nil, nil
+    -- order list on custom targets
+    if targetTitle and this.coords[1] and not pfQuest.route.IsTarget(this.coords[1][3]) then
+      local target = nil
+
+      -- check for the old index of the target
+      for id, data in pairs(this.coords) do
+        if pfQuest.route.IsTarget(data[3]) then
+          target = id
+          break
+        end
+      end
+
+      -- rearrange coordinates
+      if target then
+        local tmp = {}
+        table.insert(tmp, this.coords[target])
+
+        for id, data in pairs(this.coords) do
+          if id ~= target then
+            table.insert(tmp, this.coords[id])
+          end
+        end
+
+        this.coords = tmp
+      end
     end
 
-    this.recalculate = now + 1
+    this.recalculate = GetTime() + 1
   end
 
-  -- show arrow when there are valid coords and arrow is enabled
-  if not wrongmap and this.coords[1] and this.coords[1][4] and
-     pfQuest_config["arrow"] == "1" and not this.arrow:IsShown() then
+  -- show arrow when route exists and is stable
+  if not wrongmap and this.coords[1] and this.coords[1][4] and not this.arrow:IsShown() and pfQuest_config["arrow"] == "1" and GetTime() > completed + 1 then
     this.arrow:Show()
   end
 
-  -- abort without any nodes or when routes disabled
+  -- abort without any nodes or distances
   if not this.coords[1] or not this.coords[1][4] or pfQuest_config["routes"] == "0" then
     ClearPath(objectivepath)
     ClearPath(playerpath)
@@ -306,17 +243,18 @@ pfQuest.route:SetScript("OnUpdate", function()
   end
 
   -- check first node for changes
-  if this.firstnode ~= tostring(this.coords[1][1] .. this.coords[1][2]) then
-    this.firstnode = tostring(this.coords[1][1] .. this.coords[1][2])
+  if this.firstnode ~= tostring(this.coords[1][1]..this.coords[1][2]) then
+    this.firstnode = tostring(this.coords[1][1]..this.coords[1][2])
 
     -- recalculate objective paths
     local route = { [1] = this.coords[1] }
     local blacklist = { [1] = true }
-    for i = 2, table.getn(this.coords) do
-      if route[i - 1] then
-        route[i] = GetNearest(route[i-1][1], route[i-1][2], this.coords, blacklist)
+    for i=2, table.getn(this.coords) do
+      if route[i-1] then -- make sure the route was not blacklisted
+        route[i] = GetNearest(route[i-1][1],route[i-1][2],this.coords, blacklist)
       end
 
+      -- remove other item requirement gameobjects of same type from route
       if route[i] and route[i][3] and route[i][3].itemreq then
         for id, data in pairs(this.coords) do
           if not blacklist[id] and data[1] and data[2] and data[3]
@@ -331,23 +269,27 @@ pfQuest.route:SetScript("OnUpdate", function()
     ClearPath(objectivepath)
     for i, data in pairs(route) do
       if i > 1 then
-        DrawLine(objectivepath, route[i-1][1], route[i-1][2], route[i][1], route[i][2])
+        DrawLine(objectivepath, route[i-1][1],route[i-1][2],route[i][1],route[i][2])
       end
     end
 
-    completed = now
+    -- route calculation timestamp
+    completed = GetTime()
   end
 
   if wrongmap then
+    -- hide player-to-object path
     ClearPath(playerpath)
     ClearPath(mplayerpath)
   else
+    -- draw player-to-object path
     ClearPath(playerpath)
     ClearPath(mplayerpath)
-    DrawLine(playerpath, xplayer * 100, yplayer * 100, this.coords[1][1], this.coords[1][2], true)
+    DrawLine(playerpath,xplayer*100,yplayer*100,this.coords[1][1],this.coords[1][2],true)
 
+    -- also draw minimap path if enabled
     if pfQuest_config["routeminimap"] == "1" then
-      DrawLine(mplayerpath, xplayer * 100, yplayer * 100, this.coords[1][1], this.coords[1][2], true, true)
+      DrawLine(mplayerpath,xplayer*100,yplayer*100,this.coords[1][1],this.coords[1][2],true,true)
     end
   end
 end)
@@ -377,128 +319,117 @@ pfQuest.route.arrow:SetScript("OnDragStop", function()
   this:StopMovingOrSizing()
 end)
 
-
 local invalid, lasttarget
+local xplayer, yplayer, wrongmap, wrongmap
+local xDelta, yDelta, dir, angle
+local player, perc, column, row, xstart, ystart, xend, yend
+local area, alpha, texalpha, color
 local defcolor = "|cffffcc00"
+local r, g, b
 
 pfQuest.route.arrow:SetScript("OnUpdate", function()
-  local xplayer, yplayer, wrongmap_arrow
-  local xDelta, yDelta, dir, angle
-  local player, cell, column, row, xstart, ystart, xend, yend
-  local area, alpha, texalpha, color
-  local r, g, b
   -- abort if the frame is not initialized yet
   if not this.parent then return end
 
-  -- Use cached projection from route OnUpdate when available (avoids duplicate GetPlayerMapPosition + UnApply)
-  local now = GetTime()
-  local useCache = (this.parent._proj_frame and (now - this.parent._proj_frame) < 0.15)
-
-  if useCache then
-    xplayer = this.parent._proj_px
-    yplayer = this.parent._proj_py
-    wrongmap_arrow = (xplayer == 0 and yplayer == 0) and true or nil
-  else
-    local rx, ry = GetPlayerMapPosition("player")
-    wrongmap_arrow = rx == 0 and ry == 0 and true or nil
-    xplayer, yplayer = pfQuest.Projections:UnApply(this.parent._proj_mapID or pfMap:GetMapID(), rx * 100, ry * 100)
-  end
-
-  local target = this.parent.coords and this.parent.coords[1] and this.parent.coords[1][4] and this.parent.coords[1] or nil
+  xplayer, yplayer = GetPlayerMapPosition("player")
+  wrongmap = xplayer == 0 and yplayer == 0 and true or nil
+  target = this.parent.coords and this.parent.coords[1] and this.parent.coords[1][4] and this.parent.coords[1] or nil
 
   -- disable arrow on invalid map/route
-  if not target or wrongmap_arrow or pfQuest_config["arrow"] == "0" then
-    if invalid and invalid < now then
+  if not target or wrongmap or pfQuest_config["arrow"] == "0" then
+    if invalid and invalid < GetTime() then
       this:Hide()
-      invalid = nil
     elseif not invalid then
-      -- grace period of 1.5s before hiding (avoids flicker during zone transitions)
-      invalid = now + 1.5
+      invalid = GetTime() + 1
     end
+
     return
   else
     invalid = nil
   end
 
   -- arrow positioning stolen from TomTomVanilla.
+  -- all credits to the original authors:
   -- https://github.com/cralor/TomTomVanilla
-  local tx, ty = tonumber(target[1]), tonumber(target[2])
-  local AR = pfQuest.Projections.ASPECT_RATIO
-  xDelta = (tx - xplayer) * AR
-  yDelta = ty - yplayer
-
-  -- Angle calculation (clockwise, North = 0)
-  dir   = atan2(xDelta, -(yDelta))
-  angle = dir > 0 and (pi * 2) - dir or -dir
-  if angle < 0 then angle = angle + pi * 2 end
+  xDelta = (target[1] - xplayer*100)*1.5
+  yDelta = (target[2] - yplayer*100)
+  dir = atan2(xDelta, -(yDelta))
+  dir = dir > 0 and (math.pi*2) - dir or -dir
+  if dir < 0 then dir = dir + 360 end
+  angle = math.rad(dir)
 
   player = pfQuestCompat.GetPlayerFacing()
-  angle  = angle - player
-
-  local perc = abs(((pi - abs(angle)) / pi))
-  r, g, b = pfUI.api.GetColorGradient(floor(perc * 100) / 100)
-
-  cell   = modulo(floor(angle / (pi * 2) * 108 + 0.5), 108)
-  if cell < 0 then cell = cell + 108 end
+  angle = angle - player
+  perc = math.abs(((math.pi - math.abs(angle)) / math.pi))
+  r, g, b = pfUI.api.GetColorGradient(floor(perc*100)/100)
+  cell = modulo(floor(angle / (math.pi*2) * 108 + 0.5), 108)
   column = modulo(cell, 9)
-  row    = floor(cell / 9)
+  row = floor(cell / 9)
   xstart = (column * 56) / 512
   ystart = (row * 42) / 512
-  xend   = ((column + 1) * 56) / 512
-  yend   = ((row + 1) * 42) / 512
+  xend = ((column + 1) * 56) / 512
+  yend = ((row + 1) * 42) / 512
 
   -- guess area based on node count
   area = target[3].priority and target[3].priority or 1
-  area = max(1, min(20, area))
+  area = max(1, area)
+  area = min(20, area)
   area = (area / 10) + 1
 
-  alpha    = target[4] - area
-  alpha    = alpha > 1 and 1 or alpha < 0.5 and 0.5 or alpha
+  alpha = target[4] - area
+  alpha = alpha > 1 and 1 or alpha
+  alpha = alpha < .5 and .5 or alpha
+
   texalpha = (1 - alpha) * 2
-  texalpha = texalpha > 1 and 1 or texalpha < 0 and 0 or texalpha
+  texalpha = texalpha > 1 and 1 or texalpha
+  texalpha = texalpha < 0 and 0 or texalpha
 
-  r = r + texalpha
-  g = g + texalpha
-  b = b + texalpha
+  r, g, b = r + texalpha, g + texalpha, b + texalpha
 
-  -- update arrow texture coords
-  this.model:SetTexCoord(xstart, xend, ystart, yend)
-  this.model:SetVertexColor(r, g, b)
+  -- update arrow
+  this.model:SetTexCoord(xstart,xend,ystart,yend)
+  this.model:SetVertexColor(r,g,b)
 
   -- recalculate values on target change
   if target ~= lasttarget then
+    -- calculate difficulty color
     color = defcolor
     if tonumber(target[3]["qlvl"]) then
       color = pfMap:HexDifficultyColor(tonumber(target[3]["qlvl"]))
     end
 
+    -- update node texture
     if target[3].texture then
       this.texture:SetTexture(target[3].texture)
-      if target[3].vertex and (target[3].vertex[1] > 0 or target[3].vertex[2] > 0 or target[3].vertex[3] > 0) then
+
+      if target[3].vertex and ( target[3].vertex[1] > 0
+        or target[3].vertex[2] > 0
+        or target[3].vertex[3] > 0 )
+      then
         this.texture:SetVertexColor(unpack(target[3].vertex))
       else
-        this.texture:SetVertexColor(1, 1, 1, 1)
+        this.texture:SetVertexColor(1,1,1,1)
       end
     else
-      this.texture:SetTexture(pfQuestConfig.path .. "\\img\\node")
+      this.texture:SetTexture(pfQuestConfig.path.."\\img\\node")
       this.texture:SetVertexColor(pfMap.str2rgb(target[3].title))
     end
 
+    -- update arrow texts
     local level = target[3].qlvl and "[" .. target[3].qlvl .. "] " or ""
-    this.title:SetText(color .. level .. target[3].title .. "|r")
+    this.title:SetText(color..level..target[3].title.."|r")
     local desc = target[3].description or ""
     if not pfUI or not pfUI.uf then
-      this.description:SetTextColor(1, .9, .7, 1)
+      this.description:SetTextColor(1,.9,.7,1)
       desc = string.gsub(desc, "ff33ffcc", "ffffffff")
     end
-    this.description:SetText(desc .. "|r.")
-    lasttarget = target
+    this.description:SetText(desc.."|r.")
   end
 
   -- only refresh distance text on change
-  local distance = floor(target[4] * 10) / 10
+  local distance = floor(target[4]*10)/10
   if distance ~= this.distance.number then
-    this.distance:SetText("|cffaaaaaa" .. pfQuest_Loc["Distance"] .. ": " .. string.format("%.1f", distance))
+    this.distance:SetText("|cffaaaaaa" .. pfQuest_Loc["Distance"] .. ": "..string.format("%.1f", distance))
     this.distance.number = distance
   end
 
