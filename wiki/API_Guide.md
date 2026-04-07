@@ -1,23 +1,49 @@
-# Guía de API Interna (Para Desarrolladores)
+# 🛠️ Guía de API — pfQuest [Séquito Edition]
 
-Este documento describe las funciones clave de pfQuest [Séquito Edition] para integración con otros AddOns del ecosistema DarckRovert.
-
-## Funciones de Base de Datos (`database.lua`)
-
-- `pfDatabase:Reload()`: Recarga los accesos directos locales a la base de datos.
-- `pfDatabase:BuildNameIndex()`: Reconstruye el índice O(1) de nombres para búsquedas rápidas.
-- `pfDatabase:GetIDByName(name, type)`: Devuelve el ID de un NPC, objeto o item dado su nombre localizado.
-
-## Funciones de Mapa (`map.lua`)
-
-- `pfMap:AddNode(title, node, layer, addon)`: Añade un icono personalizado al mapa.
-- `pfMap:UpdateNodes()`: Fuerza el redibujado de todos los iconos activos.
-- `pfMap:DeleteNode(addon, title)`: Elimina un nodo específico identificándolo por su addon de origen y título.
-
-## Funciones de Ruta y Navegación (`route.lua`)
-
-- `pfQuest.route:LockToQuest(title)`: Bloquea la flecha de navegación a una misión específica por su título.
-- `pfDatabase:QueryServer()`: Solicita al servidor Turtle WoW el estado completo de misiones completadas via mensaje de AddOn.
+Este documento detalla las funciones internas del motor de pfQuest para desarrolladores de **El Séquito del Terror**.
 
 ---
-© 2026 DarckRovert
+
+## 🗃️ Funciones de Base de Datos (`database.lua`)
+
+### `pfDatabase:Reload()`
+Recarga las referencias locales a las tablas de misiones, NPCs y objetos activos tras un cambio de zona o carga de parche.
+
+### `pfDatabase:GetIDByName(name, type)`
+Búsqueda de alta velocidad por nombre localizado.
+- **name:** String (ej: "Lich King").
+- **type:** "units", "objects" o "items".
+- **Retorno:** ID (Integer) o `nil`.
+
+### `pfDatabase:BuildNameIndex()`
+Reconstruye el índice asociativo O(1). Usar solo si se inyectan datos dinámicos masivos.
+
+---
+
+## 🗺️ Funciones del Mapa (`map.lua`)
+
+### `pfMap:AddNode(title, node, layer, addon)`
+Inyecta un icono en el mapa mundial y el minimapa.
+- **title:** Título del nodo (ej: "Misión: Elnazzareno").
+- **node:** Tabla de propiedades (x, y, texture, etc.).
+- **layer:** Prioridad de renderizado (1-4).
+- **addon:** Identificador (ej: "PFQUEST" o "WCS_BRAIN").
+
+### `pfMap:DeleteNode(addon, title)`
+Elimina dinámicamente un nodo del mapa. Ideal para limpiezas de tracking.
+
+---
+
+## 🏹 Funciones de Navegación (`route.lua`)
+
+### `pfQuest.route:LockToQuest(title)`
+Fija la aguja de navegación a una misión específica.
+- **title:** Título exacto de la misión.
+
+### `pfQuest.Projections:UnApply(mapID, x, y)`
+Función crítica del sistema GPS. Convierte coordenadas visuales (0-100) en coordenadas reales de base de datos.
+- **Retorno:** `px, py` (Float).
+
+---
+© 2026 **DarckRovert** — El Séquito del Terror.
+*Ingeniería de alta precisión para Turtle WoW.*
