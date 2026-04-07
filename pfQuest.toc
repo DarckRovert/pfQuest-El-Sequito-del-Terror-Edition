@@ -1,0 +1,30 @@
+﻿## Interface: 11200
+## Title: |cff33ffccpf|cffffffffQuest |r|cff00ccff[Sequito del Terror]|r
+## Author: El Sequito del Terror
+## Notes: A Questhelper and Database -- Turtle WoW Edition
+## Notes-ruRU: O6nervennyi pomoshchnik zadanij i baza dannykh
+## Version: 9.3.1 [God-Tier]
+## OptionalDeps: pfUI
+## SavedVariables: pfQuest_questcache, pfQuest_turtlecount
+## SavedVariablesPerCharacter: pfQuest_config, pfBrowser_fav, pfQuest_history, pfQuest_colors, pfQuest_server, pfQuest_track
+
+init\data.xml
+init\enUS.xml
+init\koKR.xml
+init\frFR.xml
+init\deDE.xml
+init\zhCN.xml
+init\zhTW.xml
+init\esES.xml
+init\ruRU.xml
+init\ptBR.xml
+
+init\data-turtle.xml
+init\enUS-turtle.xml
+init\deDE-turtle.xml
+init\esES-turtle.xml
+init\ptBR-turtle.xml
+init\zhCN-turtle.xml
+init\ruRU-turtle.xml
+
+init\addon.xml

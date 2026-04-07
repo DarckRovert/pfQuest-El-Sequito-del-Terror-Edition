@@ -1,0 +1,26 @@
+# WoW Vanilla / Turtle WoW Ignore
+*.toc.bak
+*.lua.bak
+*.xml.bak
+*.txt.bak
+*.old
+
+# Backup and Cache files
+!pfQuest.toc
+!db/*.lua
+!init/*.xml
+!img/*.tga
+
+# Developer leftovers
+toolbox/
+.git/
+.svn/
+.github/workflows/
+.travis.yml
+.gitlab-ci.yml
+Makefile
+projections_generated.lua
+gravity_audit.txt
+LAST_DEPLOY.txt
+scripts/
+tests/
