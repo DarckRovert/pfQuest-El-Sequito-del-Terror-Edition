@@ -80,12 +80,12 @@ PfExtend_Config_Index["About"] = { "Author", "Version", "Github" }
 PfExtend_Config_Template["About"] = {
     ["Author"]  = function() return { text = "El Séquito del Terror" } end,
     ["Version"] = function()
-        local v = "9.3.1 [God-Tier]"
+        local v = "9.4.0 [Omni-Tier]"
         return { text = v }
     end,
     ["Github"]  = function() return { text = "github.com/DarckRovert/pfQuest-El-Sequito-del-Terror-Edition" } end,
 }
 -- Función de versión accesible globalmente para comparaciones internas
 PfExtend_Config_Template["About"].Version = function()
-    return "9.3.1"
+    return "9.4.0"
 end

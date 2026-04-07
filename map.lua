@@ -875,7 +875,7 @@ function pfMap:UpdateNodes()
   pfQuest.tracker.Reset()
 
   -- reset route
-  pfQuest.route:Reset()
+  if pfQuest.route then pfQuest.route:Reset() end
 
   -- refresh all nodes
   for addon, _ in pairs(pfMap.nodes) do

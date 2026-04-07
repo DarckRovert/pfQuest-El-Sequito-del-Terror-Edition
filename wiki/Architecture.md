@@ -1,6 +1,6 @@
 # 📐 Arquitectura de Sistema — pfQuest [Séquito Edition]
 
-Este documento detalla la estructura interna de la **v9.3.1 [God-Tier]**. La arquitectura se basa en un diseño modular para garantizar la compatibilidad con el motor de WoW 1.12 (Lua 5.0) y la integración profunda con la base de datos de Turtle WoW.
+Este documento detalla la estructura interna de la **v9.4.0 [Omni-Tier]**. La arquitectura se basa en un diseño modular para garantizar la compatibilidad con el motor de WoW 1.12 (Lua 5.0) y la integración profunda con la base de datos de Turtle WoW.
 
 ---
 

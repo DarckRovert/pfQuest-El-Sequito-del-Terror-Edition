@@ -1,22 +1,18 @@
-# Registro de Cambios (Changelog)
+# Changelog - pfQuest [Séquito Edition]
 
-## [9.3.1] - 2026-04-06
+## [9.4.0-Omni-Tier] - 2026-04-07
+### Corregido / Optimizado
+- **Arquitectura de Memoria (Lua 5.0):** Resolución completa de error crítico `too many upvalues` en `route.lua` reorganizando la declaratoria local en la secuencia OnUpdate.
+- **Soporte Regional Híbrido:** Reestructuración jerárquica en `patchtable.lua` para forzar la inyección de NPCs custom de Turtle WoW (enUS) antes de fusionar el español, impidiendo la pérdida del entorno no traducido.
+- **Auto-Preservación (NoLoc):** Amputación forzosa del protocolo legacy `noloc` en `database.lua`. El AddOn ya no sobrescribirá las tablas `esES` a inglés al detectar latencia o el diccionario nativo del núcleo del servidor inglés.
+- **Sintaxis Legacy:** Sustitución de operador `%` por función `modulo` garantizando operatividad de vectores (flechas) del Vanilla.
+
+## [12.2.0-Séquito] - 2026-04-07
+- **Estructura de Datos esES-turtle:** Creación de archivos `db/esES/` para items, unidades y objetos exclusivos de Turtle WoW.
+- **Suite de Documentación:** README corporativo, Wiki técnica completa y protocolos de seguridad.
+- **Gravity AI Bridge Integration:** Scripts de automatización para traducción técnica masiva.
+
+## [12.2.0] - 2026-04-06
 ### Añadido
-- **Fusión Turtle WoW:** Integración dinámica de 10 archivos de base de datos (`db/*-turtle.lua`).
-- **Nodos de Mazmorra:** Desactivación de minimapa en instancias personalizadas de Turtle WoW mediante `pfMap:HasMinimap`.
-- **Identidad Séquito:** Inyectado el branding de "El Séquito del Terror" en la UI y sistema de bienvenida.
-
-### Mejorado
-- **Motor de Navegación:** Refactorización de `route.lua` con caché de proyección de 0.15s, eliminando stuttering.
-- **Rendimiento de Memoria:** Recolección de basura agresiva de tablas de locales no usadas (~65MB ahorrados).
-- **Consistencia del Tracker:** Hooks manuales para `CollapseQuestHeader` y `ExpandQuestHeader` para evitar que las misiones desaparezcan al colapsar zonas.
-- **Optimización de Búsqueda:** Implementación de `nameIndex` (O(1)) y `staticRejectSet` (O(n) pre-filtrado).
-
-### Corregido
-- **Bug Crítico:** Falla en el merge de locales turtle sobre tablas ya liberadas por `database.lua`.
-- **Bug de Nodos:** Corrección de `xmax` duplicado en `database.lua`.
-- **Micro-cortes:** Recálculo del `sortfunc` optimizado para evitar calls redundantes.
-
----
-Atentamente,
-**DarckRovert**
+- Versión optimizada para el ecosistema "El Séquito del Terror".
+- Documentación corporativa inicial.

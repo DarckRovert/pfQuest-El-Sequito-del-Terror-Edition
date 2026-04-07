@@ -231,7 +231,7 @@ function tracker.ButtonUpdate()
   local alpha = tonumber((pfQuest_config["trackeralpha"] or .2)) or .2
   local state = 0 -- 0: normal, 1: hover, 2: active
   
-  if pfQuest.route.activeQuest and pfQuest.route.activeQuest == this.title then
+  if pfQuest.route and pfQuest.route.activeQuest and pfQuest.route.activeQuest == this.title then
     state = 2
   elseif pfMap.highlight and pfMap.highlight == this.title then
     state = 1
@@ -290,11 +290,11 @@ function tracker.ButtonClick()
     pfQuest_colors[this.title] = { pfMap.str2rgb(this.title .. GetTime()) }
     pfMap:UpdateNodes()
   elseif expand_states[this.title] == 0 then
-    pfQuest.route:LockToQuest(this.title)
+    if pfQuest.route and pfQuest.route.LockToQuest then pfQuest.route:LockToQuest(this.title) end
     expand_states[this.title] = 1
     tracker.ButtonEvent(this)
   elseif expand_states[this.title] == 1 then
-    pfQuest.route:LockToQuest(this.title)
+    if pfQuest.route and pfQuest.route.LockToQuest then pfQuest.route:LockToQuest(this.title) end
     expand_states[this.title] = 0
     tracker.ButtonEvent(this)
   end

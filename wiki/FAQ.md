@@ -1,43 +1,16 @@
-# 👨‍💻 Preguntas Frecuentes (FAQ) — pfQuest [Séquito Edition]
+# Preguntas Frecuentes (FAQ) - pfQuest [Séquito Edition]
 
-Aquí encontrarás las soluciones rápidas a dudas técnicas sobre la **v9.3.1 [God-Tier]** y su integración con **El Séquito del Terror**.
+### 1. ¿Funciona con el servidor oficial de Turtle WoW?
+Sí. Esta edición está diseñada específicamente para las misiones personalizadas de Turtle WoW, incluyendo Emerald Dream, Gilneas, y las cadenas de Karazhan.
 
----
+### 2. Mi juego está en español pero veo textos en inglés, ¿por qué?
+Probablemente estés encontrando una misión personalizada de Turtle que aún no ha sido inyectada en la base de datos `esES-turtle`. He procesado las misiones principales (IDs 40000+), pero el ecosistema sigue creciendo. Reporta el ID de la misión si encuentras una faltante.
 
-## ❓ Preguntas de Instalación & Configuración
+### 3. ¿Interfiere con otros addons de mapas como Questie?
+pfQuest es un ecosistema autónomo. Puede coexistir con Questie, pero se recomienda usar uno solo para evitar saturación visual en el mapa. Esta edición del Séquito está optimizada para ser más ligera y precisa en Turtle WoW.
 
-### ¿Es compatible con pfUI?
-**Sí.** El AddOn pfQuest [Séquito Edition] está diseñado para integrarse nativamente con pfUI. Si no tienes pfUI, pfQuest funcionará de manera independiente pero con menos cosmética externa.
+### 4. ¿Cómo actualizo la base de datos de traducciones?
+Las traducciones se encuentran en `db/esES/`. Puedes editar `quests-turtle.lua` para añadir tus propias correcciones. Para actualizaciones masivas, el proyecto utiliza el **Gravity AI Bridge**.
 
-### ¿Por qué aparece un mensaje de bienvenida de "El Séquito"?
-Es la confirmación de que el motor de parches **patchtable.lua** ha inicializado correctamente el contenido exclusivo de Turtle WoW. Si no ves este mensaje, es posible que el AddOn no esté cargando los datos del servidor.
-
-### ¿Cómo muevo la flecha de navegación?
-Mantenga presionada la tecla **Shift** y arrastre la flecha con el botón izquierdo del ratón a cualquier posición de la pantalla.
-
----
-
-## ❓ Preguntas sobre el Motor Gráfico & Datos
-
-### ¿Por qué algunos iconos parpadean en el minimapa?
-Esto ocurre en zonas de transición de Turtle WoW donde el servidor cambia el ID del mapa. El motor del Séquito tiene un **período de gracia de 1.5s** para suavizar estas transiciones.
-
-### ¿Cómo limpio el mapa de iconos de búsqueda?
-Use el comando `/db clean`. Esto liberará memoria y limpiará visualmente el mapa de resultados de misiones u objetos que ya no necesites.
-
-### ¿pfQuest consume mucha memoria?
-Gracias a nuestra técnica de **recolección de basura de locales**, pfQuest [Séquito Edition] consume entre **55MB y 65MB** menos que las versiones estándar durante una sesión larga, optimizando el rendimiento de tu cliente 1.12.
-
----
-
-## ❓ Soporte Técnico & Errores
-
-### He encontrado un error de "Action Blocked".
-Este error suele ocurrir por conflictos de otros AddOns con el motor de Blizzard. pfQuest es **Taint-Free**, pero si persiste, use `/reload` para limpiar el buffer de la interfaz.
-
-### No veo misiones de nivel bajo.
-Vaya a las opciones del AddOn (`/db`) y asegúrese de que el filtro de "Show Low Level Quests" esté activado.
-
----
-© 2026 **DarckRovert** — El Séquito del Terror.
-*Ingeniería de alta precisión para Turtle WoW.*
+### 5. ¿Qué significa "Séquito del Terror Edition"?
+Es una versión personalizada que incluye optimizaciones de rendimiento, parches específicos para el cliente 1.12.1 de Turtle WoW y un sistema de localización autónomo que no depende de parches externos del servidor.

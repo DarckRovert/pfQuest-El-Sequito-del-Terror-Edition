@@ -1,6 +1,6 @@
 # 📖 Manual de Usuario — pfQuest [Séquito Edition]
 
-Este manual proporciona una guía detallada sobre cómo interactuar con el motor de misiones de **v9.3.1 [God-Tier]**.
+Este manual proporciona una guía detallada sobre cómo interactuar con el motor de misiones de **v9.4.0 [Omni-Tier]**.
 
 ---
 

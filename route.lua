@@ -377,14 +377,14 @@ end)
 
 
 local invalid, lasttarget
-local xplayer, yplayer, wrongmap_arrow
-local xDelta, yDelta, dir, angle
-local player, cell, column, row, xstart, ystart, xend, yend
-local area, alpha, texalpha, color
 local defcolor = "|cffffcc00"
-local r, g, b
 
 pfQuest.route.arrow:SetScript("OnUpdate", function()
+  local xplayer, yplayer, wrongmap_arrow
+  local xDelta, yDelta, dir, angle
+  local player, cell, column, row, xstart, ystart, xend, yend
+  local area, alpha, texalpha, color
+  local r, g, b
   -- abort if the frame is not initialized yet
   if not this.parent then return end
 
@@ -436,9 +436,9 @@ pfQuest.route.arrow:SetScript("OnUpdate", function()
   local perc = abs(((pi - abs(angle)) / pi))
   r, g, b = pfUI.api.GetColorGradient(floor(perc * 100) / 100)
 
-  cell   = (floor(angle / (pi * 2) * 108 + 0.5)) % 108
+  cell   = modulo(floor(angle / (pi * 2) * 108 + 0.5), 108)
   if cell < 0 then cell = cell + 108 end
-  column = cell % 9
+  column = modulo(cell, 9)
   row    = floor(cell / 9)
   xstart = (column * 56) / 512
   ystart = (row * 42) / 512

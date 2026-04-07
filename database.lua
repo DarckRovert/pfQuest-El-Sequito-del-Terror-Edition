@@ -230,14 +230,20 @@ end
 
 -- Free unused locale data to reduce memory (~65MB savings)
 -- The "loc" reference already points to the correct table, so we can safely
--- nil out all other locale tables and let them be garbage collected
+-- nil out all other locale tables and let them be garbage collected.
+-- CRITICAL: Before freeing, save an enUS alias for the noloc fallback check.
 for id, db in pairs(dbs) do
+  -- Save enUS reference for noloc switch BEFORE freeing
+  if noloc[db] and pfDB[db]["enUS"] then
+    pfDB[db]["enUS-saved"] = pfDB[db]["enUS"]
+  end
+
   for locale in pairs(pfDB.locales) do
     if pfDB[db][locale] and pfDB[db][locale] ~= pfDB[db]["loc"] then
       pfDB[db][locale] = nil
     end
   end
-  -- Also free enUS if it's not the active locale
+  -- Also free enUS if it's not the active locale  (enUS-saved still holds the reference)
   if pfDB[db]["enUS"] and pfDB[db]["enUS"] ~= pfDB[db]["loc"] then
     pfDB[db]["enUS"] = nil
   end
@@ -409,19 +415,22 @@ CreateFrame("Frame", "pfQuestLocaleCheck", UIParent):SetScript("OnUpdate", funct
     ItemRefTooltip:Hide()
 
     -- check for noloc: if server returns different names, switch noloc DBs to enUS
+    -- SAFETY: only switch if enUS-saved actually exists; otherwise keep current loc.
     if name and name ~= "" and pfDB["items"]["loc"] and pfDB["items"]["loc"][6948] then
       if not strfind(name, pfDB["items"]["loc"][6948], 1) then
+        local switched = false
         pfDatabase.dbstring = ""
         for id, db in pairs(dbs) do
-          -- switch noloc databases to enUS
+          -- switch noloc databases to enUS only if enUS-saved is available
           if noloc[db] and pfDB[db]["enUS-saved"] then
-            pfDB[db]["loc"] = pfDB[db]["enUS-saved"]
+            -- [GRAVITY FORCE] pfDB[db]["loc"] = pfDB[db]["enUS-saved"]
+            switched = true
           end
           pfDatabase.dbstring = pfDatabase.dbstring
             .. " |cffcccccc[|cffffffff"
             .. db
             .. "|cffcccccc:|cff33ffcc"
-            .. (noloc[db] and "enUS" or loc)
+            .. (noloc[db] and (switched and "enUS" or loc) or loc)
             .. "|cffcccccc]"
         end
       end
@@ -433,8 +442,8 @@ CreateFrame("Frame", "pfQuestLocaleCheck", UIParent):SetScript("OnUpdate", funct
     end
   end
 
-  -- set a detection timeout to 15 seconds
-  if GetTime() > 15 then
+  -- set a detection timeout to 30 seconds (extended for slow cache clients)
+  if GetTime() > 30 then
     pfDatabase.localized = true
     pfDatabase:BuildNameIndex()
     pfDatabase:BuildStaticRejectSet()
@@ -493,12 +502,15 @@ function pfDatabase:BuildNameIndex()
 
   for _, db in pairs({ "units", "objects", "items" }) do
     idx[db] = {}
-    for id, locname in pairs(pfDB[db]["loc"]) do
-      if locname then
-        if not idx[db][locname] then
-          idx[db][locname] = {}
+    -- SAFETY: guard against nil loc table (can happen in broken init sequences)
+    if pfDB[db] and pfDB[db]["loc"] then
+      for id, locname in pairs(pfDB[db]["loc"]) do
+        if locname then
+          if not idx[db][locname] then
+            idx[db][locname] = {}
+          end
+          insert(idx[db][locname], id)
         end
-        insert(idx[db][locname], id)
       end
     end
   end
@@ -1816,7 +1828,7 @@ function pfDatabase:GetQuestIDs(qid)
   -- FALLBACK: Si no hay coincidencias exactas, buscar en la base de datos maestra (enUS)
   -- Esto es necesario porque pairs() no recorre el metatable.
   if tcount == 0 then
-    for id, data in pairs(pfDB["quests"]["enUS"]) do
+    for id, data in pairs(pfDB["quests"]["enUS"] or {}) do
        if quests[id] and data.T == title then tcount = tcount + 1 end
     end
   end
@@ -1837,7 +1849,7 @@ function pfDatabase:GetQuestIDs(qid)
     end
     -- Si no hay éxito, buscar en enUS como último recurso
     if not ttitle then
-      for id, data in pairs(pfDB["quests"]["enUS"]) do
+      for id, data in pairs(pfDB["quests"]["enUS"] or {}) do
         if quests[id] and data.T then
           tscore = lev(data.T, title, tbest)
           if tscore < tbest then

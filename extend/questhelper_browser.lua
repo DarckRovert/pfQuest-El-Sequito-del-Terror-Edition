@@ -617,7 +617,7 @@ function PFEXQuestHelper.UpdateNodes()
     local map   = pfMap:GetMapID(GetCurrentMapContinent(), GetCurrentMapZone())
     local i     = 1
     pfQuest.tracker.Reset()
-    pfQuest.route:Reset()
+    if pfQuest.route then pfQuest.route:Reset() end
     for addon, _ in pairs(PFEXQuestHelper.nodes) do
         if PFEXQuestHelper.nodes[addon][map] then
             for coords, node in pairs(PFEXQuestHelper.nodes[addon][map]) do

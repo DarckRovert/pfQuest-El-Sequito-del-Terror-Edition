@@ -42,18 +42,25 @@ end
 -- CRITICAL: Merge turtle locale data into pfDB[db]["loc"]
 -- At this point database.lua has already freed all locale tables (esES, enUS, etc.)
 -- except pfDB[db]["loc"] which points to the active locale.
--- We merge the turtle locale that matches the active locale, falling back to enUS-turtle.
+-- We must FIRST merge enUS-turtle as a generic fallback for custom server data,
+-- and THEN merge the specific active locale (esES-turtle) over it to translate what exists.
 for _, db in pairs(dbs) do
-  local turtle_loc = pfDB[db][loc.."-turtle"] or pfDB[db]["enUS-turtle"]
-  if turtle_loc and pfDB[db]["loc"] then
-    patchtable(pfDB[db]["loc"], turtle_loc)
+  if pfDB[db]["loc"] then
+    -- 1. Merging english turtle base (Fallback for untranslated custom DB)
+    if pfDB[db]["enUS-turtle"] then
+      patchtable(pfDB[db]["loc"], pfDB[db]["enUS-turtle"])
+    end
+    -- 2. Merging active locale turtle patch (Overrides english with available translations)
+    if loc ~= "enUS" and pfDB[db][loc.."-turtle"] then
+      patchtable(pfDB[db]["loc"], pfDB[db][loc.."-turtle"])
+    end
   end
 end
 
 -- Merge professions locale (professions loc is not freed by database.lua)
 local prof_loc = pfDB["professions"]["loc"] or pfDB["professions"][loc] or pfDB["professions"]["enUS"]
-local prof_update = pfDB["professions"][loc.."-turtle"] or pfDB["professions"]["enUS-turtle"]
-if prof_update then patchtable(prof_loc, prof_update) end
+if pfDB["professions"]["enUS-turtle"] then patchtable(prof_loc, pfDB["professions"]["enUS-turtle"]) end
+if loc ~= "enUS" and pfDB["professions"][loc.."-turtle"] then patchtable(prof_loc, pfDB["professions"][loc.."-turtle"]) end
 
 -- Merge minimap and meta tables
 if pfDB["minimap-turtle"] then patchtable(pfDB["minimap"], pfDB["minimap-turtle"]) end
