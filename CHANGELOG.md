@@ -4,14 +4,12 @@ Todos los cambios notables en este proyecto serán documentados en este archivo 
 
 ---
 
-## [v5.3.2] — 2026-04-07 [Lag-Free Edition]
+## [v5.3.3] — 2026-04-07 [Sticky-Stability]
 
-### ⚡ Optimizaciones Críticas (Rendimiento)
-- **`quest.lua`**: Incremento del tick global de `0.05s` a `0.2s`. Adición de *early-exit* en el procesamiento de la cola de misiones.
-- **`tracker.lua`**: Throttle de `0.1s` al fader de visibilidad del rastreador.
-- **`route.lua`**: Incremento del throttle de distancias de la flecha de navegación de `0.1s` a `0.25s`.
-- **`map.lua`**: Control del bucle de animaciones de nodos (`0.05s`) para prevenir micro-cortes al navegar por el mapa.
-- **`turtle_db`**: Parche de base de datos nativo para las nuevas zonas de expansión de Turtle WoW.
+### 🏹 Navegación y Flecha
+- **`route.lua`**: Refactorización del motor de búsqueda de objetivos. Implementación de **Soberanía de Selección** (Sticky Target).
+- **Bug Fix**: Corregido el error de salto errático entre misiones debido a conflictos de coordenadas y jerarquía de diario.
+- **Matemáticas**: Adición de nivel de tolerancia (epsilon) para comparaciones de coordenadas en Lua 5.0.
 
 ---
 
@@ -19,6 +17,7 @@ Todos los cambios notables en este proyecto serán documentados en este archivo 
 
 | Versión | Fecha | Nombre Clave | Estado | Resumen |
 | :--- | :--- | :--- | :---: | :--- |
+| **5.3.3** | 2026-04-07 | **Sticky-Stability** | ✅ | Persistence Engine, Coordinate Fix, Priority Logic. |
 | **5.3.2** | 2026-04-07 | **Lag-Free** | ✅ | Throttling Engine, FPS Boost, Bug Fixes. |
 | **9.3.0** | 2026-03-25 | **Turtle-Expand** | ⚠️ | Integración Emerald Dream y zonas Custom. |
 | **9.2.0** | 2026-02-15 | **Stability** | ❌ | Versión inicial del ecosistema. |

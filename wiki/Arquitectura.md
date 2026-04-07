@@ -1,8 +1,15 @@
-# Arquitectura: pfQuest
+# Arquitectura — pfQuest Sequito Edition 🏛️
 
-Este documento establece la estructura interna modular de **pfQuest**.
+## Visión General
+pfQuest Sequito Edition es una refactorización de pfQuest diseñada específicamente para el cliente de Turtle WoW. Utiliza un sistema de capas para manejar la base de datos de misiones personalizadas y un motor de rutas optimizado para evitar latencia (Lag-Free Engine).
 
-## Principios Híbridos (Séquito-Tier)
-El módulo ha sido aislado y perfilado para evitar advertencias "Too Many Upvalues" por los estrictos márgenes del VM Lua 5.0 clásico. Se mantiene latencia baja en la caché de tablas para asegurar la renderización en tiempo real junto con el Bridge de IA local.
+## Módulos Principales
+1. **Motor de Rutas (`route.lua`)**: Gestiona la lógica de la flecha de navegación. Utiliza un sistema de prioridades jerárquico que permite bloquear objetivos manualmente (Sticky Targets).
+2. **Sistema de Proyecciones (`projections.lua`)**: Traduce coordenadas del juego a un sistema global coordinado para corregir desviaciones en mapas personalizados de expansión.
+3. **Controlador de Base de Datos (`database.lua`)**: Encargado del indexado de misiones, npcs y objetos. Optimizado para búsquedas rápidas mediante tablas de hash.
+4. **Rastreador (`tracker.lua`)**: Interfaz minimalista que permite gestionar el seguimiento de misiones sin saturar la pantalla.
 
-Todo cambio estructural se registra y consolida a través de Gravity y el ecosistema unificado GitHub de [DarckRovert](https://github.com/DarckRovert). 
+## Flujo de Datos
+- **Entrada**: Eventos (`QUEST_LOG_UPDATE`, `UNIT_PLAYER_POSITION`).
+- **Procesamiento**: Filtrado por zona actual y cálculo de distancias proyectadas.
+- **Salida**: Actualización de la flecha (frame-based) e iconos en el mapa.

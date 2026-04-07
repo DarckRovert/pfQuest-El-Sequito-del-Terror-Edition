@@ -1,16 +1,13 @@
-# Preguntas Frecuentes (FAQ) - pfQuest [Séquito Edition]
+# FAQ — pfQuest Sequito Edition ❓
 
-### 1. ¿Funciona con el servidor oficial de Turtle WoW?
-Sí. Esta edición está diseñada específicamente para las misiones personalizadas de Turtle WoW, incluyendo Emerald Dream, Gilneas, y las cadenas de Karazhan.
+### ¿Por qué la flecha no se mueve?
+Asegúrate de que tienes misiones activas y que no estás en una zona donde la proyección de mapa no es válida (ej. algunas mazmorras profundas).
 
-### 2. Mi juego está en español pero veo textos en inglés, ¿por qué?
-Probablemente estés encontrando una misión personalizada de Turtle que aún no ha sido inyectada en la base de datos `esES-turtle`. He procesado las misiones principales (IDs 40000+), pero el ecosistema sigue creciendo. Reporta el ID de la misión si encuentras una faltante.
+### ¿Cómo limpio el objetivo manual (Sticky Target)?
+Puedes seleccionar otra misión en el diario o hacer clic en el botón "Clean" en el panel de misiones del diario de pfQuest.
 
-### 3. ¿Interfiere con otros addons de mapas como Questie?
-pfQuest es un ecosistema autónomo. Puede coexistir con Questie, pero se recomienda usar uno solo para evitar saturación visual en el mapa. Esta edición del Séquito está optimizada para ser más ligera y precisa en Turtle WoW.
+### La flecha apunta a un lugar vacío, ¿qué hago?
+Este es un fallo común de precisión. Hemos implementado un sistema de **Tolerancia (Epsilon)** en la v5.3.3 para minimizar esto. Si persiste, intenta relogear o usar `/db clean`.
 
-### 4. ¿Cómo actualizo la base de datos de traducciones?
-Las traducciones se encuentran en `db/esES/`. Puedes editar `quests-turtle.lua` para añadir tus propias correcciones. Para actualizaciones masivas, el proyecto utiliza el **Gravity AI Bridge**.
-
-### 5. ¿Qué significa "Séquito del Terror Edition"?
-Es una versión personalizada que incluye optimizaciones de rendimiento, parches específicos para el cliente 1.12.1 de Turtle WoW y un sistema de localización autónomo que no depende de parches externos del servidor.
+### ¿Funciona con otros addons de mapas?
+pfQuest Sequito Edition es compatible con pfUI y la mayoría de addons de mapa de Vanilla, aunque se recomienda usar la integración nativa para evitar conflictos de capas.

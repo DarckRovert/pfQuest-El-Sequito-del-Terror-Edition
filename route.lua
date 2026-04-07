@@ -70,39 +70,58 @@ pfQuest.route.SetTarget = function(node, default)
 end
 
 pfQuest.route.IsTarget = function(node)
-  if node then
-    if pfQuest.route.lockX and pfQuest.route.lockY then
-      if node.x == pfQuest.route.lockX and node.y == pfQuest.route.lockY then
+  if not node then return nil end
+
+  -- Priority 1: Manual Sticky Quest (Title match is absolute)
+  if pfQuest.route.activeQuest and pfQuest.route.activeQuest == node.title then
+    return true
+  end
+
+  -- Priority 2: Coordinate Lock (Map click targeting with epsilon tolerance)
+  if pfQuest.route.lockX and pfQuest.route.lockY then
+    local nodeX = tonumber(node.x or 0)
+    local nodeY = tonumber(node.y or 0)
+    local lockX = tonumber(pfQuest.route.lockX)
+    local lockY = tonumber(pfQuest.route.lockY)
+    
+    if nodeX and nodeY and lockX and lockY then
+      local epsilon = 0.001
+      if math.abs(nodeX - lockX) < epsilon and math.abs(nodeY - lockY) < epsilon then
         return true
       end
-      return nil
     end
-
-    if pfQuest.route.activeQuest and pfQuest.route.activeQuest == node.title then
-      return true
-    end
-
-    if targetTitle and targetTitle == node.title
-      and targetCluster == node.cluster
-      and targetLayer == node.layer
-      and targetTexture == node.texture
-    then
-      return true
-    end
+    return nil
   end
+
+  -- Priority 3: Legacy Frame Selectors
+  if targetTitle and targetTitle == node.title
+    and targetCluster == node.cluster
+    and targetLayer == node.layer
+    and targetTexture == node.texture
+  then
+    return true
+  end
+
   return nil
 end
 
 local lastpos, completed = 0, 0
 local function sortfunc(a, b)
-  -- Priority 1: Pure distance sorting (Must be stable for table.sort)
+  -- Priority 1: Hierarchy Rank (Sticky=0, LogIndex=1-N, Others=9999)
+  local rankA = a[5] or 9999
+  local rankB = b[5] or 9999
+  if rankA ~= rankB then
+    return rankA < rankB
+  end
+
+  -- Priority 2: Local distance (Only for nodes of the SAME quest)
   local distA = a[4] or 99999
   local distB = b[4] or 99999
   if distA ~= distB then
     return distA < distB
   end
 
-  -- Priority 2: Fallback lexicographical (Avoids flickering on identical distances)
+  -- Priority 3: Stable fallback
   local sA = (a[1] or 0) .. ":" .. (a[2] or 0)
   local sB = (b[1] or 0) .. ":" .. (b[2] or 0)
   return sA < sB
@@ -140,12 +159,8 @@ pfQuest.route:SetScript("OnUpdate", function()
     end
   end
 
-  -- Stabilize and Sort
+  -- Hierarchy Logic & Sorting
   if not this.recalculate or this.recalculate < now then
-    table.sort(this.coords, sortfunc)
-
-    -- Hierarchy Magnetic Post-Sort (Anti-Jump)
-    local target = nil
     local hCache = {}
     if pfQuest.questlog then
       for qid, data in pairs(pfQuest.questlog) do
@@ -155,37 +170,20 @@ pfQuest.route:SetScript("OnUpdate", function()
       end
     end
 
-    local bestRank = 9999
-    
+    -- Pre-calculate Ranks for stable sorting
     for id, data in pairs(this.coords) do
-      -- Manual target priority (Sticky)
-      if pfQuest.route.IsTarget and pfQuest.route.IsTarget(data[3]) then
-        target = id
-        break
+      local rank = 9999
+      local node = data[3]
+      if pfQuest.route.IsTarget and pfQuest.route.IsTarget(node) then
+        rank = 0
+      elseif node.title and hCache[node.title] then
+        rank = hCache[node.title]
       end
-      
-      -- Automatic QuestLog Hierarchy (Turtle WoW Tracker order)
-      local title = data[3] and data[3].title
-      if title and hCache[title] then
-        local rank = hCache[title]
-        if rank < bestRank then
-          bestRank = rank
-          target = id
-        end
-      end
+      this.coords[id][5] = rank
     end
 
-    -- Rearrange coordinates if target is found
-    if target and target > 1 then
-      local tmp = {}
-      table.insert(tmp, this.coords[target])
-      for id, data in pairs(this.coords) do
-        if id ~= target then
-          table.insert(tmp, this.coords[id])
-        end
-      end
-      this.coords = tmp
-    end
+    -- Perform Hierarchical Sort
+    table.sort(this.coords, sortfunc)
 
     this.recalculate = now + 1.5
   end
