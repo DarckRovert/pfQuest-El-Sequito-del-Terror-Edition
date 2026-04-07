@@ -123,6 +123,7 @@ pfMap.tooltip:SetScript("OnUpdate", function()
                 itemQuality = iq
             end
             local itemLink
+            local itemName = (pfDB.items and pfDB.items.loc and pfDB.items.loc[id]) or "Unknown Item"
             if type(itemQuality) == "number" then
                 PfExtend_Database["ShowLoots"]["itemQualityData"][id] = itemQuality
                 local itemColor = "|c" .. string.format("%02x%02x%02x%02x", 255,
@@ -130,11 +131,11 @@ pfMap.tooltip:SetScript("OnUpdate", function()
                     ITEM_QUALITY_COLORS[itemQuality].g * 255,
                     ITEM_QUALITY_COLORS[itemQuality].b * 255)
                 itemLink = itemColor ..
-                    "|Hitem:" .. id .. compat.itemsuffix .. "|h[" .. pfDB.items.loc[id] .. "]|h|r"
+                    "|Hitem:" .. id .. compat.itemsuffix .. "|h[" .. itemName .. "]|h|r"
             end
             if type(itemQuality) ~= "number" or itemQuality >= miniq then
                 if i < tonumber(PfExtend_Global.ReadSetting("ShowLoots", "showNum")) then
-                    itemLink = itemLink or "[" .. pfDB.items.loc[id] .. "]"
+                    itemLink = itemLink or "[" .. itemName .. "]"
                     table.insert(showlines, { ["itemLink"] = itemLink, ["chance"] = chance, ["r"] = r, ["g"] = g, ["b"] = b })
                     i = i + 1
                 end
