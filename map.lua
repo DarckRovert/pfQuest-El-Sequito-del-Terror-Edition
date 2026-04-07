@@ -1078,6 +1078,9 @@ end)
 
 local hlstate, shiftstate, transition, hidecluster, fps, resetmap
 pfMap:SetScript("OnUpdate", function()
+  -- Throttle de 0.05s para aliviar carga de animaciones (Lag Fix)
+  if (this.tick or 0) > GetTime() then return else this.tick = GetTime() + 0.05 end
+
   -- handle highlights and animations
   if pfMap.queue_update or transition or pfMap.highlight ~= hlstate or shiftstate ~= hidecluster then
     hlstate, shiftstate, transition = pfMap.highlight, hidecluster, nil

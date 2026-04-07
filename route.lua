@@ -247,14 +247,16 @@ local function sortfunc(a, b)
 end
 
 pfQuest.route:SetScript("OnUpdate", function()
+  -- Salida temprana si no hay coordenadas en memoria (Lag Fix)
+  if not next(this.coords) then return end
+
   local xplayer, yplayer = GetPlayerMapPosition("player")
-  local wrongmap = xplayer == 0 and yplayer == 0 and true or nil
   local curpos = xplayer + yplayer
 
-  -- Throttle: update distances max once per 0.1s, and only on position change OR every 1s
+  -- Throttle: update distances max once per 0.25s (antes 0.1s), and only on position change
   local now = GetTime()
   if (this.throttle or 0) > now and lastpos == curpos then return end
-  this.throttle = now + 0.1
+  this.throttle = now + 0.25
   lastpos = curpos
 
   -- update distances to player in Legacy Coordinate Space

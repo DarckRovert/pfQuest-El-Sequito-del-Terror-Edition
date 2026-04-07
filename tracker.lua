@@ -92,6 +92,9 @@ tracker:SetScript("OnMouseUp",function()
 end)
 
 tracker:SetScript("OnUpdate", function()
+  -- Throttle de 0.1s para evitar saturación de frames (Lag Fix)
+  if (this.tick or 0) > GetTime() then return else this.tick = GetTime() + 0.1 end
+
   if WorldMapFrame:IsShown() then
     if this.strata ~= "FULLSCREEN_DIALOG" then
       this:SetFrameStrata("FULLSCREEN_DIALOG")
@@ -105,9 +108,11 @@ tracker:SetScript("OnUpdate", function()
   end
 
   local alpha = this.backdrop:GetAlpha()
+  local mouseOver = MouseIsOver(this)
   local content = tracker.buttons[1] and not tracker.buttons[1].empty and true or nil
-  local goal = ( content and not MouseIsOver(this) ) and 0 or not content and not MouseIsOver(this) and 0.5 or 1
-  if ceil(alpha*10) ~= ceil(goal*10)then
+  local goal = ( content and not mouseOver ) and 0 or not content and not mouseOver and 0.5 or 1
+  
+  if ceil(alpha*10) ~= ceil(goal*10) then
     this.backdrop:SetAlpha(alpha + ((goal - alpha) > 0 and .1 or (goal - alpha) < 0 and -.1 or 0))
   end
 

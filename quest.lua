@@ -204,17 +204,33 @@ pfQuest:SetScript("OnUpdate", function()
   if this.lock and this.lock > GetTime() then return end
   if not pfDatabase.localized then return end
 
-  if (this.tick or 0.05) > GetTime() then return else this.tick = GetTime() + 0.05 end
+  -- Aumentamos el tick a 0.2s (antes 0.05s) para reducir carga de CPU en bucle
+  if (this.tick or 0) > GetTime() then return else this.tick = GetTime() + 0.2 end
 
-  -- check questlog each second
-  if (this.qlogtick or 1) < GetTime() then
+  -- check questlog cada 2 segundos (antes cada 1s)
+  if (this.qlogtick or 0) < GetTime() then
     if pfQuest:UpdateQuestlog() then
       pfQuest:Debug("Update Quest|cff33ffcc Log|r [|cffff3333Tick|r]")
     end
-    this.qlogtick = GetTime() + 1
+    this.qlogtick = GetTime() + 2
   end
 
-  if this.updateQuestLog == true and pfQuest.queueCount == 0 then
+  -- Salida temprana si no hay nada que procesar (evita micro-latencias)
+  if pfQuest.queueCount == 0 then 
+    if this.updateQuestGivers == true then
+      pfQuest:Debug("Update Quest|cff33ffcc Givers")
+      if pfQuest_config["trackingmethod"] ~= 4 and
+        pfQuest_config["allquestgivers"] == "1"
+      then
+        local meta = { ["addon"] = "PFQUEST" }
+        pfDatabase:SearchQuests(meta)
+      end
+      this.updateQuestGivers = false
+    end
+    return 
+  end
+
+  if this.updateQuestLog == true then
     pfQuest:Debug("Update Quest|cff33ffcc Log")
     pfQuest:UpdateQuestlog()
     this.updateQuestLog = false
@@ -230,8 +246,6 @@ pfQuest:SetScript("OnUpdate", function()
     end
     this.updateQuestGivers = false
   end
-
-  if pfQuest.queueCount == 0 then return end
 
   -- process queue
   for id, entry in pairs(this.queue) do
