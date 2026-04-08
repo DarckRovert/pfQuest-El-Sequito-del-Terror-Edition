@@ -50,7 +50,9 @@ Conoce los detalles de la intervención técnica en nuestra base de conocimiento
 ## 🔗 Ecosistema Oficial (DarckRovert)
 
 - [Live Streams (Twitch)](https://twitch.tv/darckrovert)
-- [Soporte Técnico](https://github.com/DarckRovert)
+- [Soporte & Donaciones](https://ko-fi.com/darckrovert)
+- [GitHub Oficial](https://github.com/DarckRovert)
+- [Web Corporativa](https://sequitodelterror.netlify.app/)
 
 ---
 © 2026 **DarckRovert** — El Séquito del Terror.
