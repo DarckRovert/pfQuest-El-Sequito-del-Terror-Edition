@@ -118,6 +118,23 @@ pfQuest.route.IsTarget = function(node)
   return nil
 end
 
+-- Event-based hierarchy cache
+pfQuest.route.hCache = {}
+pfQuest.route:RegisterEvent("QUEST_LOG_UPDATE")
+pfQuest.route:RegisterEvent("PLAYER_ENTERING_WORLD")
+pfQuest.route:SetScript("OnEvent", function()
+  if event == "QUEST_LOG_UPDATE" or event == "PLAYER_ENTERING_WORLD" then
+    this.hCache = {}
+    if pfQuest.questlog then
+      for qid, data in pairs(pfQuest.questlog) do
+        if data.title and data.qlogid then
+          this.hCache[data.title] = tonumber(data.qlogid)
+        end
+      end
+    end
+  end
+end)
+
 local lastpos, completed = 0, 0
 local function sortfunc(a, b)
   -- Priority 1: Hierarchy Rank (Sticky=0, LogIndex=1-N, Others=9999)
@@ -127,14 +144,14 @@ local function sortfunc(a, b)
     return rankA < rankB
   end
 
-  -- Priority 2: Local distance (Only for nodes of the SAME quest)
+  -- Priority 2: Local distance (Tie-breaker for same quest)
   local distA = a[4] or 99999
   local distB = b[4] or 99999
   if distA ~= distB then
     return distA < distB
   end
 
-  -- Priority 3: Stable fallback
+  -- Priority 3: Stability
   local sA = (a[1] or 0) .. ":" .. (a[2] or 0)
   local sB = (b[1] or 0) .. ":" .. (b[2] or 0)
   return sA < sB
@@ -144,69 +161,52 @@ pfQuest.route:SetScript("OnUpdate", function()
   if not next(this.coords) then return end
 
   local xplayer, yplayer = GetPlayerMapPosition("player")
+  if xplayer == 0 and yplayer == 0 then
+    if this.arrow:IsShown() then this.arrow:Hide() end
+    return
+  end
+  
   local curpos = xplayer + yplayer
 
-  -- Throttle: update distances max once per 0.25s (Performance Fix)
+  -- Throttle: distance and rank update (Stable at 0.2s)
   local now = GetTime()
   if (this.throttle or 0) > now and lastpos == curpos then return end
-  this.throttle = now + 0.25
+  this.throttle = now + 0.2
   lastpos = curpos
 
-  -- update distances using Turtle WoW Projections
-  local mapID = pfMap:GetMapID()
-  local proj_px, proj_py = pfQuest.Projections:UnApply(mapID, xplayer * 100, yplayer * 100)
-  local AR = pfQuest.Projections.ASPECT_RATIO
+  -- Hierarchy Logic State
+  local isLocked = (pfQuest.route.activeQuestID or pfQuest.route.activeQuest) and true or nil
+  local hCache = this.hCache or {}
 
-  -- Cache for the arrow update
-  this._proj_px    = proj_px
-  this._proj_py    = proj_py
-  this._proj_mapID = mapID
-  this._proj_frame = now
-
+  -- Unified processing loop: Distances + Ranks (Backup Math Restoration)
   for id, data in pairs(this.coords) do
     if data[1] and data[2] then
+      -- Multiplier 1.5 is the native Shagu/Backup standard for xDelta
       local tx, ty = data[1], data[2]
-      local dx = (proj_px - tx) * AR
-      local dy = (proj_py - ty)
+      local dx = (xplayer*100 - tx) * 1.5
+      local dy = (yplayer*100 - ty)
       this.coords[id][4] = ceil(sqrt(dx * dx + dy * dy) * 100) / 100
-    end
-  end
-
-  -- Hierarchy Logic & Sorting (Throttled more aggressively)
-  if not this.recalculate or this.recalculate < now then
-    local hCache = {}
-    if pfQuest.questlog then
-      for qid, data in pairs(pfQuest.questlog) do
-        if data.title and data.qlogid then
-          hCache[data.title] = tonumber(data.qlogid)
-        end
-      end
-    end
-
-    -- Pre-calculate Ranks for stable sorting (Unified Loop Logic)
-    local isLocked = (pfQuest.route.activeQuestID or pfQuest.route.activeQuest) and true or nil
-    for id, data in pairs(this.coords) do
+      
+      -- Rank assignment
       local rank = 9999
       local node = data[3]
-      
-      -- 1. Check Sticky Lock
       if pfQuest.route.IsTarget and pfQuest.route.IsTarget(node) then
         rank = 0
-      -- 2. Check Hierarchy (Only if not locked and in log)
       elseif not isLocked and node and node.title and hCache[node.title] then
         rank = hCache[node.title]
       end
       this.coords[id][5] = rank
     end
-
-    -- Perform Hierarchical Sort
-    table.sort(this.coords, sortfunc)
-    this.recalculate = now + 1.2 -- Back to 1.2s to reduce CPU spikes
   end
 
-  -- Visibility and Cleanup
-  local wrongmap = (xplayer == 0 and yplayer == 0) and true or nil
-  if not wrongmap and this.coords[1] and this.coords[1][4] then
+  -- Perform Hierarchical Sort (Throttled for performance)
+  if not this.recalculate or this.recalculate < now then
+    table.sort(this.coords, sortfunc)
+    this.recalculate = now + 1.2
+  end
+
+  -- Visibility Check
+  if this.coords[1] and this.coords[1][4] then
      if not this.arrow:IsShown() and pfQuest_config["arrow"] == "1" then
        this.arrow:Show()
      end
@@ -214,7 +214,12 @@ pfQuest.route:SetScript("OnUpdate", function()
      if this.arrow:IsShown() then this.arrow:Hide() end
   end
 
-  -- Abort if no targets
+  -- Cache values for Arrow model (Backup math compatibility)
+  this._proj_px = xplayer * 100
+  this._proj_py = yplayer * 100
+  this._proj_frame = now
+  
+  -- Abort if no targets or routes disabled
   if not this.coords[1] or not this.coords[1][4] or pfQuest_config["routes"] == "0" then
     return
   end

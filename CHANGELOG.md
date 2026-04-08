@@ -4,15 +4,17 @@ Todos los cambios notables en este proyecto serán documentados en este archivo 
 
 ---
 
-## [v5.3.4] — 2026-04-07 [Sovereign-Stability]
+## [v5.3.6] — 2026-04-07 [Legacy-Hybrid]
 
-### 🏹 Navegación Core (Re-Arquitectura Total)
-- **ID-Based Tracking**: Implementación de seguimiento por **QuestID** (Inmortal). Eliminada la fragilidad de emparejamiento por texto.
-- **Jerarquía Aislada**: El sistema de proximidad ahora se desactiva totalmente al fijar una misión, eliminando el "flickering" o saltos accidentales.
-- **Precisión Turtle**: Sincronización de vectores con el motor oficial de Shagu para cliente 1.12.1.
-- **Performance**: Optimización de `throttle` a `0.1s` para mayor fluidez visual.
+### ⚡ Optimización Quirúrgica (Restauración de Backup)
+- **Math Restore**: Regreso al motor matemático de la copia de seguridad (`x1.5 multiplier`). Eliminado el sistema de proyecciones dinámicas en tiempo real para recuperar los FPS perdidos.
+- **Event-Driven Hierarchy**: El caché del diario de misiones ahora se actualiza solo mediante eventos (`QUEST_LOG_UPDATE`), eliminando el bucle de procesamiento pesado en `OnUpdate`.
+- **Zero-Stutter Engine**: Unificación de bucles de cálculo. Ahora las distancias y los rangos se procesan en un único paso lineal.
+- **Arrow Fix**: Corregida la visibilidad de la flecha al sincronizar las coordenadas del jugador con la escala nativa del addon.
 
 ---
+
+## [v5.3.4] — 2026-04-07 [Sovereign-Stability]
 
 ## [v5.3.3] — 2026-04-07 [Sticky-Stability]
 
@@ -20,8 +22,8 @@ Todos los cambios notables en este proyecto serán documentados en este archivo 
 
 | Versión | Fecha | Nombre Clave | Estado | Resumen |
 | :--- | :--- | :--- | :---: | :--- |
+| **5.3.6** | 2026-04-07 | **Legacy-Hybrid** | ✅ | Backup Math, Event-Driven, Zero-Stutter. |
 | **5.3.4** | 2026-04-07 | **Sovereign-Stability** | ✅ | ID-Based Tracking, Zero-Flicker, Shagu Vectors. |
-| **5.3.3** | 2026-04-07 | **Sticky-Stability** | ✅ | Persistence Engine, Coordinate Fix, Priority Logic. |
 | **9.3.0** | 2026-03-25 | **Turtle-Expand** | ⚠️ | Integración Emerald Dream y zonas Custom. |
 | **9.2.0** | 2026-02-15 | **Stability** | ❌ | Versión inicial del ecosistema. |
 
