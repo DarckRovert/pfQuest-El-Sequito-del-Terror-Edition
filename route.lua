@@ -146,10 +146,10 @@ pfQuest.route:SetScript("OnUpdate", function()
   local xplayer, yplayer = GetPlayerMapPosition("player")
   local curpos = xplayer + yplayer
 
-  -- Throttle: update distances max once per 0.5s (Lag-Free)
+  -- Throttle: update distances max once per 0.25s (Performance Fix)
   local now = GetTime()
   if (this.throttle or 0) > now and lastpos == curpos then return end
-  this.throttle = now + 0.1 -- Reduced throttle for smoother response
+  this.throttle = now + 0.25
   lastpos = curpos
 
   -- update distances using Turtle WoW Projections
@@ -172,7 +172,7 @@ pfQuest.route:SetScript("OnUpdate", function()
     end
   end
 
-  -- Hierarchy Logic & Sorting
+  -- Hierarchy Logic & Sorting (Throttled more aggressively)
   if not this.recalculate or this.recalculate < now then
     local hCache = {}
     if pfQuest.questlog then
@@ -183,16 +183,17 @@ pfQuest.route:SetScript("OnUpdate", function()
       end
     end
 
-    -- Pre-calculate Ranks for stable sorting
+    -- Pre-calculate Ranks for stable sorting (Unified Loop Logic)
     local isLocked = (pfQuest.route.activeQuestID or pfQuest.route.activeQuest) and true or nil
     for id, data in pairs(this.coords) do
       local rank = 9999
       local node = data[3]
       
+      -- 1. Check Sticky Lock
       if pfQuest.route.IsTarget and pfQuest.route.IsTarget(node) then
         rank = 0
-      elseif not isLocked and node.title and hCache[node.title] then
-        -- Only follow hierarchy if NO manual lock is active
+      -- 2. Check Hierarchy (Only if not locked and in log)
+      elseif not isLocked and node and node.title and hCache[node.title] then
         rank = hCache[node.title]
       end
       this.coords[id][5] = rank
@@ -200,15 +201,17 @@ pfQuest.route:SetScript("OnUpdate", function()
 
     -- Perform Hierarchical Sort
     table.sort(this.coords, sortfunc)
-
-    this.recalculate = now + 0.8 -- Faster recalculation
+    this.recalculate = now + 1.2 -- Back to 1.2s to reduce CPU spikes
   end
 
-  -- Visibilty Check
+  -- Visibility and Cleanup
   local wrongmap = (xplayer == 0 and yplayer == 0) and true or nil
-  if not wrongmap and this.coords[1] and this.coords[1][4] and 
-     not this.arrow:IsShown() and pfQuest_config["arrow"] == "1" then
-     this.arrow:Show()
+  if not wrongmap and this.coords[1] and this.coords[1][4] then
+     if not this.arrow:IsShown() and pfQuest_config["arrow"] == "1" then
+       this.arrow:Show()
+     end
+  else
+     if this.arrow:IsShown() then this.arrow:Hide() end
   end
 
   -- Abort if no targets
