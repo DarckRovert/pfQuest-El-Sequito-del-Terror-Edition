@@ -31,9 +31,10 @@ pfQuest.route.AddPoint = function(self, tbl)
   self.firstnode = nil
 end
 
-function pfQuest.route:LockToQuest(title)
+pfQuest.route.LockToQuest = function(self, title, id)
   if not title then return end
   self.activeQuest = title
+  self.activeQuestID = id or (pfQuest.questlog and pfQuest.questlog[title] and pfQuest.questlog[title].id)
   self.lockX, self.lockY = nil, nil
   
   local nearest = nil
@@ -41,7 +42,14 @@ function pfQuest.route:LockToQuest(title)
   
   if self.coords then
     for id, data in pairs(self.coords) do
-      if data[3].title == title and data[4] then
+      local match = nil
+      if self.activeQuestID and data[3].questid and self.activeQuestID == data[3].questid then
+        match = true
+      elseif data[3].title == title then
+        match = true
+      end
+
+      if match and data[4] then
          if not nearest or data[4] < nearest then
             nearest = data[4]
             bestX, bestY = data[1], data[2]
@@ -72,12 +80,17 @@ end
 pfQuest.route.IsTarget = function(node)
   if not node then return nil end
 
-  -- Priority 1: Manual Sticky Quest (Title match is absolute)
+  -- Priority 1: Manual Sticky Quest (ID Match is Sovereign)
+  if pfQuest.route.activeQuestID and node.questid and pfQuest.route.activeQuestID == node.questid then
+    return true
+  end
+
+  -- Priority 2: Title Fallback (Localization compatible)
   if pfQuest.route.activeQuest and pfQuest.route.activeQuest == node.title then
     return true
   end
 
-  -- Priority 2: Coordinate Lock (Map click targeting with epsilon tolerance)
+  -- Priority 3: Coordinate Lock (Map click targeting)
   if pfQuest.route.lockX and pfQuest.route.lockY then
     local nodeX = tonumber(node.x or 0)
     local nodeY = tonumber(node.y or 0)
@@ -93,7 +106,7 @@ pfQuest.route.IsTarget = function(node)
     return nil
   end
 
-  -- Priority 3: Legacy Frame Selectors
+  -- Priority 4: Legacy Frame Selectors
   if targetTitle and targetTitle == node.title
     and targetCluster == node.cluster
     and targetLayer == node.layer
@@ -133,10 +146,10 @@ pfQuest.route:SetScript("OnUpdate", function()
   local xplayer, yplayer = GetPlayerMapPosition("player")
   local curpos = xplayer + yplayer
 
-  -- Throttle: update distances max once per 0.5s (Lag Fix)
+  -- Throttle: update distances max once per 0.5s (Lag-Free)
   local now = GetTime()
   if (this.throttle or 0) > now and lastpos == curpos then return end
-  this.throttle = now + 0.5
+  this.throttle = now + 0.1 -- Reduced throttle for smoother response
   lastpos = curpos
 
   -- update distances using Turtle WoW Projections
@@ -171,12 +184,15 @@ pfQuest.route:SetScript("OnUpdate", function()
     end
 
     -- Pre-calculate Ranks for stable sorting
+    local isLocked = (pfQuest.route.activeQuestID or pfQuest.route.activeQuest) and true or nil
     for id, data in pairs(this.coords) do
       local rank = 9999
       local node = data[3]
+      
       if pfQuest.route.IsTarget and pfQuest.route.IsTarget(node) then
         rank = 0
-      elseif node.title and hCache[node.title] then
+      elseif not isLocked and node.title and hCache[node.title] then
+        -- Only follow hierarchy if NO manual lock is active
         rank = hCache[node.title]
       end
       this.coords[id][5] = rank
@@ -185,7 +201,7 @@ pfQuest.route:SetScript("OnUpdate", function()
     -- Perform Hierarchical Sort
     table.sort(this.coords, sortfunc)
 
-    this.recalculate = now + 1.5
+    this.recalculate = now + 0.8 -- Faster recalculation
   end
 
   -- Visibilty Check

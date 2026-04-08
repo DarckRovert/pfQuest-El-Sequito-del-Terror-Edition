@@ -650,7 +650,7 @@ function pfQuest:AddQuestLogIntegration()
         -- pfMap:ShowMapID(pfDatabase:GetBestMap(maps)) <-- REMOVED: This was too invasive
       end
 
-      pfQuest.route:LockToQuest(title)
+      pfQuest.route:LockToQuest(title, qid)
       pfMap:UpdateNodes()
     end
     pfQuestLogLock = nil
