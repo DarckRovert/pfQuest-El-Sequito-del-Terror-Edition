@@ -1,15 +1,16 @@
-# Arquitectura — pfQuest Sequito Edition 🏛️
+# 🏰 Arquitectura Técnica — pfQuest [LAG-FREE]
 
-## Visión General
-pfQuest Sequito Edition es una refactorización de pfQuest diseñada específicamente para el cliente de Turtle WoW. Utiliza un sistema de capas para manejar la base de datos de misiones personalizadas y un motor de rutas optimizado para evitar latencia (Lag-Free Engine).
+## 1. Engine de Optimización (Throttling)
+pfQuest [Séquito Edition] ha sido intervenido para mitigar el impacto en el render loop de WoW Vanilla:
+*   **OnUpdate Throttling**: Se ha reducido la frecuencia de actualización del motor de búsqueda de misiones de 1 tps (tick per second) a intervalos de 0.2s mediante una colas de prioridad asíncronas.
+*   **Caché Estática**: La base de datos de misiones se carga en una tabla hash optimizada al inicio, evitando búsquedas lineales costosas durante la navegación.
 
-## Módulos Principales
-1. **Motor de Rutas (`route.lua`)**: Gestiona la lógica de la flecha de navegación. Utiliza un sistema de prioridades jerárquico que permite bloquear objetivos manualmente (Sticky Targets).
-2. **Sistema de Proyecciones (`projections.lua`)**: Traduce coordenadas del juego a un sistema global coordinado para corregir desviaciones en mapas personalizados de expansión.
-3. **Controlador de Base de Datos (`database.lua`)**: Encargado del indexado de misiones, npcs y objetos. Optimizado para búsquedas rápidas mediante tablas de hash.
-4. **Rastreador (`tracker.lua`)**: Interfaz minimalista que permite gestionar el seguimiento de misiones sin saturar la pantalla.
+## 2. Soporte Nativo Turtle WoW
+A diferencia de otras versiones, los parches de datos para las misiones exclusivas de Turtle WoW (Emerald Dream, etc.) están inyectados directamente en el core, eliminando la necesidad de addons de parches externos que causan inestabilidad.
 
-## Flujo de Datos
-- **Entrada**: Eventos (`QUEST_LOG_UPDATE`, `UNIT_PLAYER_POSITION`).
-- **Procesamiento**: Filtrado por zona actual y cálculo de distancias proyectadas.
-- **Salida**: Actualización de la flecha (frame-based) e iconos en el mapa.
+## 3. Navegador de Precisión
+El sistema de flecha de navegación utiliza un cálculo de distancia euclidiana suavizado mediante un filtro de paso bajo, evitando que la flecha "salte" violentamente durante giros rápidos o cambios de zona.
+
+---
+© 2026 **DarckRovert** — El Séquito del Terror.
+*Soberanía Técnica Lag-Free Edition.*

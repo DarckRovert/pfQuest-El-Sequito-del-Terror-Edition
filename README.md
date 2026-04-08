@@ -1,19 +1,18 @@
-# pfQuest — Turtle WoW Edition (v5.3.5 [Sovereign-Stability]) 📍🗺️
+# pfQuest — Turtle WoW Edition (v5.3.2 [Lag-Free]) 📍🗺️
+
+![Version](https://img.shields.io/badge/version-v5.3.2--Lag--Free-green?style=for-the-badge)
+![License](https://img.shields.io/badge/License-GPL-blue?style=for-the-badge)
+![WoW](https://img.shields.io/badge/WoW-1.12.1--Turtle-orange?style=for-the-badge)
 
 > **The most powerful questing engine for World of Warcraft (Vanilla/Turtle).** Intervenido quirúrgicamente por **DarckRovert** para eliminar el lag y micro-cortes en el motor de renderizado de **El Séquito del Terror**.
-
-[![License: GPL](https://img.shields.io/badge/License-GPL-blue.svg)](./LICENSE)
-[![Version](https://img.shields.io/badge/version-v5.3.5--Sovereign--Stability-green)](./CHANGELOG.md)
-[![World of Warcraft](https://img.shields.io/badge/WoW-1.12.1--Turtle-orange)](https://turtle-wow.org)
-[![Support](https://img.shields.io/badge/Support-Ko--fi-blue)](https://ko-fi.com/darckrovert)
 
 ---
 
 ## ⚡ Ingeniería de Optimización (Lag-Free Edition)
 
-A diferencia de la versión original de Shagu, la **El Séquito del Terror Edition** ha sido optimizada para maximizar los FPS en **Turtle WoW**.
+A diferencia de la versión original de Shagu, la **Séquito Edition** ha sido optimizada para maximizar los FPS en **Turtle WoW**, con un motor de búsqueda de base de datos rediseñado.
 
-### 🧩 Optimization Matrix (Matriz de Mejoras)
+### 🧩 OPTIMIZATION MATRIX (MATRIZ DE MEJORAS)
 
 | Módulo | Tipo de Cambio | Impacto | Resumen Técnico |
 | :--- | :--- | :---: | :--- |
@@ -23,7 +22,7 @@ A diferencia de la versión original de Shagu, la **El Séquito del Terror Editi
 | **Map Nodes** | Anim Controller | 0.05s | Estabilidad de iconos al navegar el mapa |
 | **DB Patch** | Turtle WoW Lib | ✅ | Inclusión nativa de misiones de expansión |
 
-### 📊 Benchmarks de CPU (Stuttering Analysis)
+### 📊 BENCHMARKS DE CPU (STUTTERING ANALYSIS)
 
 | Contexto | pfQuest Org | Optimized Ed. | Mejora de FPS |
 | :--- | :---: | :---: | :---: |
@@ -37,11 +36,10 @@ A diferencia de la versión original de Shagu, la **El Séquito del Terror Editi
 
 Conoce los detalles de la intervención técnica en nuestra base de conocimientos:
 
-- 📐 **[Arquitectura](https://github.com/DarckRovert/pfQuest-El-Sequito-del-Terror-Edition/wiki/Arquitectura)**: Flujo de eventos y Throttling Engine.
-- ⚙️ **[Guía de API](https://github.com/DarckRovert/pfQuest-El-Sequito-del-Terror-Edition/wiki/Guía-de-API)**: Puntos de entrada para desarrolladores.
-- ❓ **[FAQ](https://github.com/DarckRovert/pfQuest-El-Sequito-del-Terror-Edition/wiki/FAQ)**: Solución a errores comunes.
-- 📖 **[Manual de Usuario](https://github.com/DarckRovert/pfQuest-El-Sequito-del-Terror-Edition/wiki/Manual-de-Usuario)**: Guía completa de uso.
-- 📈 **[Auditoría de Rendimiento](https://github.com/DarckRovert/pfQuest-El-Sequito-del-Terror-Edition/wiki/Auditoría-de-Rendimiento)**: Benchmarks de optimización.
+- 📐 **[Arquitectura](file:///e:/Turtle%20Wow/Interface/AddOns/pfQuest/wiki/Arquitectura.md)**: Flujo de eventos y Throttling Engine.
+- ⚙️ **[Guía de API](file:///e:/Turtle%20Wow/Interface/AddOns/pfQuest/wiki/Guia_API.md)**: Puntos de entrada para desarrolladores.
+- ❓ **[FAQ](file:///e:/Turtle%20Wow/Interface/AddOns/pfQuest/wiki/FAQ.md)**: Solución a errores comunes.
+- 📖 **[Manual de Usuario](file:///e:/Turtle%20Wow/Interface/AddOns/pfQuest/wiki/Manual_Usuario.md)**: Guía completa de uso.
 
 ## 🚀 Instalación Rápida (Pro-Flow)
 
@@ -52,7 +50,7 @@ Conoce los detalles de la intervención técnica en nuestra base de conocimiento
 ## 🔗 Ecosistema Oficial (DarckRovert)
 
 - [Live Streams (Twitch)](https://twitch.tv/darckrovert)
-- [Apoyo & Donaciones (Ko-fi)](https://ko-fi.com/darckrovert)
+- [Soporte Técnico](https://github.com/DarckRovert)
 
 ---
 © 2026 **DarckRovert** — El Séquito del Terror.
