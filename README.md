@@ -1,9 +1,9 @@
-# pfQuest — Turtle WoW Edition (v5.3.2 [Lag-Free]) 📍🗺️
+# pfQuest — Turtle WoW Edition (v5.3.5 [Sovereign-Stability]) 📍🗺️
 
 > **The most powerful questing engine for World of Warcraft (Vanilla/Turtle).** Intervenido quirúrgicamente por **DarckRovert** para eliminar el lag y micro-cortes en el motor de renderizado de **El Séquito del Terror**.
 
 [![License: GPL](https://img.shields.io/badge/License-GPL-blue.svg)](./LICENSE)
-[![Version](https://img.shields.io/badge/version-v5.3.2--Lag--Free-green)](./CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-v5.3.5--Sovereign--Stability-green)](./CHANGELOG.md)
 [![World of Warcraft](https://img.shields.io/badge/WoW-1.12.1--Turtle-orange)](https://turtle-wow.org)
 [![Support](https://img.shields.io/badge/Support-Ko--fi-blue)](https://ko-fi.com/darckrovert)
 
@@ -37,9 +37,11 @@ A diferencia de la versión original de Shagu, la **El Séquito del Terror Editi
 
 Conoce los detalles de la intervención técnica en nuestra base de conocimientos:
 
-- 📐 **[Arquitectura](./wiki/Architecture.md)**: Flujo de eventos y Throttling Engine.
-- ⚙️ **[Benchmarks de Latencia](./wiki/Performance_Audit.md)**: Comparativa técnica de FPS.
-- 📖 **[Manual de Usuario](./wiki/User_Manual.md)**: Guía de configuración rápida.
+- 📐 **[Arquitectura](https://github.com/DarckRovert/pfQuest-El-Sequito-del-Terror-Edition/wiki/Arquitectura)**: Flujo de eventos y Throttling Engine.
+- ⚙️ **[Guía de API](https://github.com/DarckRovert/pfQuest-El-Sequito-del-Terror-Edition/wiki/Guía-de-API)**: Puntos de entrada para desarrolladores.
+- ❓ **[FAQ](https://github.com/DarckRovert/pfQuest-El-Sequito-del-Terror-Edition/wiki/FAQ)**: Solución a errores comunes.
+- 📖 **[Manual de Usuario](https://github.com/DarckRovert/pfQuest-El-Sequito-del-Terror-Edition/wiki/Manual-de-Usuario)**: Guía completa de uso.
+- 📈 **[Auditoría de Rendimiento](https://github.com/DarckRovert/pfQuest-El-Sequito-del-Terror-Edition/wiki/Auditoría-de-Rendimiento)**: Benchmarks de optimización.
 
 ## 🚀 Instalación Rápida (Pro-Flow)
 
