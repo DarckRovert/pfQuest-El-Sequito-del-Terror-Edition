@@ -186,14 +186,30 @@ pfQuest.route:SetScript("OnUpdate", function()
   -- Hierarchy Logic State
   local isLocked = (pfQuest.route.activeQuestID or pfQuest.route.activeQuest) and true or nil
   local hCache = this.hCache or {}
+  local currentMapID = pfMap:GetMapID()
+  local AR = (pfQuest.Projections and pfQuest.Projections.ASPECT_RATIO) or 1.5
 
-  -- Unified processing loop: Distances + Ranks (Backup Math Restoration)
+  -- Get Player Global Coords (Continental Projection)
+  local px, py = xplayer * 100, yplayer * 100
+  if pfQuest.Projections then
+    px, py = pfQuest.Projections:UnApply(currentMapID, px, py)
+  end
+
+  -- Unified processing loop: Distances + Ranks (Continental Math)
   for id, data in pairs(this.coords) do
     if data[1] and data[2] then
-      -- Multiplier 1.5 is the native Shagu/Backup standard for xDelta
       local tx, ty = data[1], data[2]
-      local dx = (xplayer*100 - tx) * 1.5
-      local dy = (yplayer*100 - ty)
+      local targetMapID = data[4] or currentMapID
+      
+      -- Get Target Global Coords
+      local gx, gy = tx, ty
+      if pfQuest.Projections then
+        gx, gy = pfQuest.Projections:UnApply(targetMapID, tx, ty)
+      end
+
+      -- Distance calculation (Continental Scale)
+      local dx = (px - gx) * AR
+      local dy = (py - gy)
       this.coords[id][4] = ceil(sqrt(dx * dx + dy * dy) * 100) / 100
       
       -- Rank assignment

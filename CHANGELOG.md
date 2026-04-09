@@ -1,6 +1,13 @@
-# Changelog - pfQuest [Séquito del Terror Edition]
+## [v5.3.8] — 2026-04-09 [Sync-Fix]
 
-Todos los cambios notables en este proyecto serán documentados en este archivo.
+### 🔄 Sincronización Diario-Mapa
+- **Fix Log Check**: Corregida la discrepancia de tipos (String vs ID) al validar misiones en el diario. Ahora el addon detecta correctamente las misiones ya tomadas, evitando que aparezcan como disponibles (!) erróneamente.
+- **Unified Sanitization**: Sincronizada la limpieza de títulos en el rastreador y el mapa para asegurar emparejamientos exactos.
+- **Versión Oficial**: Actualizado a la **v5.3.8**.
+
+---
+
+## [v5.3.7] — 2026-04-09 [Global-Vision]
 
 ## [v5.3.3] - 2026-04-09 [Lag-Free 1.17]
 

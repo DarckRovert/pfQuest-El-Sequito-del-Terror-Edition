@@ -499,8 +499,9 @@ function tracker.ButtonAdd(title, node)
   if not title or not node then return end
 
   local questid = title
+  local cleanTitle = SanitizeQuestTitle(title)
   for qid, data in pairs(pfQuest.questlog) do
-    if data.title == title then
+    if data.title == cleanTitle then
       questid = qid
       break
     end

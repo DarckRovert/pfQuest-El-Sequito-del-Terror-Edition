@@ -878,7 +878,8 @@ function pfMap:UpdateNodes()
   pfQuest:Debug("Update Nodes")
 
   local color = pfQuest_config["spawncolors"] == "1" and "spawn" or "title"
-  local map = pfMap:GetMapID(GetCurrentMapContinent(), GetCurrentMapZone())
+  local currentMap = pfMap:GetMapID(GetCurrentMapContinent(), GetCurrentMapZone())
+  local scanGlobal = ( pfQuest.tracker.mode == "QUEST_TRACKING" or (pfQuest.route and pfQuest.route.activeQuest) )
   local i = 1
 
   -- reset tracker
@@ -889,60 +890,74 @@ function pfMap:UpdateNodes()
 
   -- refresh all nodes
   for addon, _ in pairs(pfMap.nodes) do
-    if pfMap.nodes[addon][map] then
-      for coords, node in pairs(pfMap.nodes[addon][map]) do
-        if not pfMap.pins[i] then
-          pfMap.pins[i] = pfMap:BuildNode("pfMapPin" .. i, WorldMapButton)
-        end
+    -- Global Scan Logic: Iterate over all maps if in Global/Quest mode
+    for map_id, map_nodes in pairs(pfMap.nodes[addon]) do
+      if map_id == currentMap or scanGlobal then
+        local isCurrentMap = (map_id == currentMap)
 
-        pfMap:UpdateNode(pfMap.pins[i], node, color)
-
-        -- set position
-        local _, _, x, y = strfind(coords, "(.*)|(.*)")
-
-        -- write points to the route plan
-        local qid = tonumber(pfMap.pins[i].questid)
-        local cleanTitle = SanitizeQuestTitle(pfMap.pins[i].title)
-        
-        -- Lock targeting: check if this is the active quest locked by the user
-        local isTarget = ( pfQuest.route and pfQuest.route.activeQuest == cleanTitle )
-        
-        local inLog = (qid and pfQuest.questlog[qid]) or (cleanTitle and pfQuest.questlog[cleanTitle])
-        if ( inLog or pfMap.pins[i].arrow == true or isTarget ) and
-          ( ( pfQuest_config["routecluster"] == "1" and pfMap.pins[i].layer >= 9 ) or
-          ( pfQuest_config["routeender"] == "1" and pfMap.pins[i].layer == 4) or
-          ( pfQuest_config["routestarter"] == "1" and pfMap.pins[i].layer == 1 and pfMap.pins[i].texture) or
-          ( pfQuest_config["routestarter"] == "1" and pfMap.pins[i].layer == 2) or
-          pfMap.pins[i].arrow == true )
-        then
-          pfQuest.route:AddPoint({ x, y, pfMap.pins[i] })
-        end
-
-        -- hide cluster nodes if set
-        if pfQuest_config["showcluster"] == "0" and pfMap.pins[i].cluster then
-          pfMap.pins[i]:Hide()
-        -- hide individual quest spawns
-        elseif pfQuest_config["showspawn"] == "0" and addon == "PFQUEST" and not pfMap.pins[i].texture then
-          pfMap.pins[i]:Hide()
-        else
-          -- populate quest list on map
-          for title, node in pairs(pfMap.pins[i].node) do
-            pfQuest.tracker.ButtonAdd(title, node)
+        for coords, node in pairs(map_nodes) do
+          if not pfMap.pins[i] then
+            pfMap.pins[i] = pfMap:BuildNode("pfMapPin" .. i, WorldMapButton)
           end
 
-          -- Apply Global Coordinate Projection Layer (GCPL)
-          local px, py = pfQuest.Projections:Apply(map, x, y)
+          pfMap:UpdateNode(pfMap.pins[i], node, color)
 
-          x = px / 100 * WorldMapButton:GetWidth()
-          y = py / 100 * WorldMapButton:GetHeight()
+          -- set position
+          local _, _, x, y = strfind(coords, "(.*)|(.*)")
+          local qid = tonumber(pfMap.pins[i].questid)
+          local cleanTitle = SanitizeQuestTitle(pfMap.pins[i].title)
+          
+          -- Lock targeting: check if this is the active quest locked by the user
+          local isTarget = ( pfQuest.route and pfQuest.route.activeQuest == cleanTitle )
+          
+          local inLog = nil
+          if qid and pfQuest.questlog[qid] then
+            inLog = true
+          elseif cleanTitle then
+            for logID, logData in pairs(pfQuest.questlog) do
+              if logData.title == cleanTitle then
+                inLog = true
+                break
+              end
+            end
+          end
+          
+          -- Priority Routing: Add to route if in log or explicitly targeted
+          if ( inLog or pfMap.pins[i].arrow == true or isTarget ) and
+            ( ( pfQuest_config["routecluster"] == "1" and pfMap.pins[i].layer >= 9 ) or
+            ( pfQuest_config["routeender"] == "1" and pfMap.pins[i].layer == 4) or
+            ( pfQuest_config["routestarter"] == "1" and pfMap.pins[i].layer == 1 and pfMap.pins[i].texture) or
+            ( pfQuest_config["routestarter"] == "1" and pfMap.pins[i].layer == 2) or
+            pfMap.pins[i].arrow == true )
+          then
+            pfQuest.route:AddPoint({ x, y, pfMap.pins[i], map_id })
+          end
 
-          pfMap.pins[i]:ClearAllPoints()
-          pfMap.pins[i]:SetPoint("CENTER", WorldMapButton, "TOPLEFT", x, -y)
+          -- Populate tracker list (Available globally if inLog)
+          if inLog or isCurrentMap then
+            for title, node_data in pairs(pfMap.pins[i].node) do
+              pfQuest.tracker.ButtonAdd(title, node_data)
+            end
+          end
 
-          pfMap.pins[i]:Show()
+          -- Visibility Control: Only show on world map if it belongs to current map
+          if isCurrentMap and not (pfQuest_config["showcluster"] == "0" and pfMap.pins[i].cluster) and
+             not (pfQuest_config["showspawn"] == "0" and addon == "PFQUEST" and not pfMap.pins[i].texture)
+          then
+            -- Apply Global Coordinate Projection Layer (GCPL)
+            local px, py = pfQuest.Projections:Apply(map_id, x, y)
+            x = px / 100 * WorldMapButton:GetWidth()
+            y = py / 100 * WorldMapButton:GetHeight()
+
+            pfMap.pins[i]:ClearAllPoints()
+            pfMap.pins[i]:SetPoint("CENTER", WorldMapButton, "TOPLEFT", x, -y)
+            pfMap.pins[i]:Show()
+          else
+            pfMap.pins[i]:Hide()
+          end
+
+          i = i + 1
         end
-
-        i = i + 1
       end
     end
   end
