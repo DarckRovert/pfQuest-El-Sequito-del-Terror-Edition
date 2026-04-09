@@ -22,4 +22,4 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 - Implementación de `/db status` para auditoría técnica.
 
 ---
-Para más información, visita la [Wiki](file:///e:/Turtle Wow/Interface/AddOns/pfQuest/wiki/Arquitectura.md).
+Para más información, visita la [Wiki](wiki/Arquitectura.md).

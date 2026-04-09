@@ -30,10 +30,12 @@ La base de datos y rastreador de misiones definitivo para World of Warcraft Vani
 
 Este proyecto se distribuye bajo la **Licencia MIT**. Para contribuir o reportar errores, consulta nuestra documentación oficial:
 
-- [Manual de Usuario](file:///e:/Turtle Wow/Interface/AddOns/pfQuest/wiki/Manual_Usuario.md)
-- [Arquitectura Técnica](file:///e:/Turtle Wow/Interface/AddOns/pfQuest/wiki/Arquitectura.md)
-- [Preguntas Frecuentes (FAQ)](file:///e:/Turtle Wow/Interface/AddOns/pfQuest/wiki/FAQ.md)
+- [📖 Manual de Usuario](wiki/Manual_Usuario.md)
+- [🏗️ Arquitectura Técnica](wiki/Arquitectura.md)
+- [❓ Preguntas Frecuentes (FAQ)](wiki/FAQ.md)
 
 ---
+
 **Desarrollado y Mantenido por DarckRovert**
+
 [Twitch Official](https://twitch.tv/darckrovert) | [GitHub Organization](https://github.com/DarckRovert)
