@@ -1,13 +1,13 @@
-﻿---
-name: "ðŸž Bug Report â€” El SÃ©quito (pfQuest)"
-about: "Reporta un error tÃ©cnico en pfQuest v5.3.2+"
+---
+name: "ðŸ ž Bug Report â€” El SÃ©quito (pfQuest)"
+about: "Reporta un error tÃ©cnico en pfQuest v5.3.3+"
 title: "[BUG] DescripciÃ³n breve del problema"
 labels: ["bug", "triage"]
 assignees: darckrovert
 
 ---
 
-## ðŸ“ DescripciÃ³n del Problema
+## ðŸ“  DescripciÃ³n del Problema
 Describe de manera directa y tÃ©cnica quÃ© estÃ¡ sucediendo. No uses relleno.
 
 ## ðŸš€ Pasos para Reproducir
@@ -16,11 +16,11 @@ Describe de manera directa y tÃ©cnica quÃ© estÃ¡ sucediendo. No uses relle
 3.  Observar el error: [ej: Stuttering de FPS o LUA Error].
 
 ## ðŸ“Š Entorno TÃ©cnico
-- **VersiÃ³n de pfQuest**: [v5.3.2 Lag-Free]
+- **VersiÃ³n de pfQuest**: [v5.3.3 Lag-Free]
 - **Cliente**: Turtle WoW v1.12.1
 - **AddOns en conflicto**: [ej: Carbonite, Cartographer]
 
-## ðŸ“ Logs (pfQuest Debug)
+## ðŸ“  Logs (pfQuest Debug)
 Pega aquÃ­ el contenido de los errores de LUA completo (si usas Swatter o similar).
 
 ```lua
