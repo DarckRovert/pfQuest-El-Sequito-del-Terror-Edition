@@ -166,13 +166,13 @@ pfQuest.route:SetScript("OnUpdate", function()
     return
   end
   
-  local curpos = xplayer + yplayer
+  local curpos = xplayer .. ":" .. yplayer
+  local now = GetTime()
 
   -- Throttle: distance and rank update (Stable at 0.2s)
-  local now = GetTime()
-  if (this.throttle or 0) > now and lastpos == curpos then return end
+  if (this.throttle or 0) > now and this.lastpos == curpos then return end
   this.throttle = now + 0.2
-  lastpos = curpos
+  this.lastpos = curpos
 
   -- Hierarchy Logic State
   local isLocked = (pfQuest.route.activeQuestID or pfQuest.route.activeQuest) and true or nil

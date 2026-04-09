@@ -16,6 +16,10 @@ local function patchtable(base, diff)
   for k, v in pairs(diff) do
     if type(v) == "string" and v == "_" then
       base[k] = nil
+    elseif type(base[k]) == "table" and type(v) == "string" then
+      -- No sobrescribir tablas técnicas con strings de localización.
+      -- Guardamos el nombre dentro de la tabla para mantener la jerarquía.
+      base[k].name = v
     else
       base[k] = v
     end

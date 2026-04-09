@@ -413,7 +413,7 @@ end
 
 function pfMap:GetMapIDByName(search)
   for id, name in pairs(pfDB["zones"]["loc"]) do
-    if name == search then
+    if name == search or (type(name) == "table" and name.name == search) then
       return id
     end
   end

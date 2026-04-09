@@ -207,14 +207,6 @@ pfQuest:SetScript("OnUpdate", function()
   -- Aumentamos el tick a 0.2s (antes 0.05s) para reducir carga de CPU en bucle
   if (this.tick or 0) > GetTime() then return else this.tick = GetTime() + 0.2 end
 
-  -- check questlog cada 2 segundos (antes cada 1s)
-  if (this.qlogtick or 0) < GetTime() then
-    if pfQuest:UpdateQuestlog() then
-      pfQuest:Debug("Update Quest|cff33ffcc Log|r [|cffff3333Tick|r]")
-    end
-    this.qlogtick = GetTime() + 2
-  end
-
   -- Salida temprana si no hay nada que procesar (evita micro-latencias)
   if pfQuest.queueCount == 0 then 
     if this.updateQuestGivers == true then
