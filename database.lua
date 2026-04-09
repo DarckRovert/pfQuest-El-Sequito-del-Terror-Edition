@@ -503,16 +503,19 @@ function pfDatabase:BuildNameIndex()
     idx[db] = nil
   end
 
-  for _, db in pairs({ "units", "objects", "items" }) do
+  for _, db in pairs({ "units", "objects", "items", "quests" }) do
     idx[db] = {}
     -- SAFETY: guard against nil loc table (can happen in broken init sequences)
     if pfDB[db] and pfDB[db]["loc"] then
       for id, locname in pairs(pfDB[db]["loc"]) do
         if locname then
-          if not idx[db][locname] then
-            idx[db][locname] = {}
+          local name = (db == "quests") and locname["T"] or locname
+          if name and name ~= "" then
+            if not idx[db][name] then
+              idx[db][name] = {}
+            end
+            insert(idx[db][name], id)
           end
-          insert(idx[db][locname], id)
         end
       end
     end
@@ -2164,9 +2167,13 @@ function pfDatabase:GetStatus()
 
   -- Check name index
   status.index_size = 0
-  if self.nameIndex and self.nameIndex["quests"] then
-    for _ in pairs(self.nameIndex["quests"]) do
-      status.index_size = status.index_size + 1
+  if self.nameIndex then
+    for db in pairs(self.nameIndex) do
+      if self.nameIndex[db] then
+        for _ in pairs(self.nameIndex[db]) do
+          status.index_size = status.index_size + 1
+        end
+      end
     end
   end
 
