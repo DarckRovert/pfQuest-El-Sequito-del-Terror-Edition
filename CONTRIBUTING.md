@@ -1,31 +1,17 @@
-# Contributing to pfQuest [Optimized Edition] 🧬🧪
+# Guía de Contribución
 
-¡Gracias por contribuir a la estabilidad de **pfQuest**! Para mantener el estándar **Diamond Tier** de **DarckRovert**, todas las mejoras deben priorizar la reducción de carga en la CPU.
+¡Gracias por tu interés en mejorar **pfQuest [Séquito del Terror]**!
 
----
+## Estándares Técnicos
+- **Wow Vanilla (Lua)**: Todo el código debe ser compatible con Lua 5.0. Prohibido el uso de operadores de Lua 5.1+ como `#` o `math.huge`.
+- **Localización**: Toda nueva cadena de texto debe añadirse a `locales.lua` o al archivo `db/esES/` correspondiente.
+- **Diamond-Tier**: El código debe estar optimizado para no causar lag (arquitectura basada en eventos).
 
-## 🛡️ Estándares Técnicos (Lag-Free Core)
-
-Este AddOn está optimizado para **Turtle WoW** (WoW v1.12.1). Las contribuciones DEBEN cumplir con:
-
-1.  **Optimization First**: No añadas funciones secundarias si comprometen los FPS.
-2.  **No Lua 5.1+**: El motor es Lua 5.0. Prohibido el operador `#` (usa `table.getn`).
-3.  **Throttling Engine**: Todo nuevo bucle `OnUpdate` DEBE implementar un throttle. Nunca uses el tick nativo del frame de WoW para cálculos de distancia o escaneo de BD.
-4.  **Database Patching**: Todo cambio en la BD de misiones de Turtle WoW debe hacerse en archivos locales de parche para evitar conflictos con la base de datos original de Shagu.
-
-## 📐 Arquetipo de Desarrollo
-
-Si eres desarrollador y deseas contribuir:
-- **`quest.lua`**: Es el cerebro del AddOn. Cualquier cambio aquí requiere una auditoría de rendimiento de 10 minutos en una zona densa.
-- **`route.lua`**: Optimiza los cálculos trigonométricos. No recalcules distancias si el jugador no se ha movido más de 1 yarda.
-- **`map.lua`**: No fuerces el repintado de iconos si no hay cambios en el estado de las misiones.
-
-## 💎 Proceso de Pull Request
-
-1.  **Fork & Branch**: Trabaja en ramas descriptivas (`fix/lag-map`, `feature/database-turtle`).
-2.  **Documentación**: Actualiza `CHANGELOG.md` antes de enviar el PR.
-3.  **Branding**: Mantén los enlaces oficiales institucionales de **DarckRovert**.
+## Proceso de Desarrollo
+1. Haz un fork del repositorio.
+2. Crea una rama para tu mejora (`feature/nueva-mejora`).
+3. Realiza tus cambios asegurando la paridad con el cliente en español.
+4. Envía un Pull Request.
 
 ---
-© 2026 **DarckRovert** — El Séquito del Terror.
-*Ingeniería de alto rendimiento para la conquista de Azeroth.*
+[DarckRovert Organization](https://github.com/DarckRovert)

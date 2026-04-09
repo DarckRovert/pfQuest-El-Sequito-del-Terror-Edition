@@ -1,59 +1,39 @@
-# pfQuest — Turtle WoW Edition (v5.3.2 [Lag-Free]) 📍🗺️
+# pfQuest [Diamond-Tier Edition] | v5.3.3
 
-![Version](https://img.shields.io/badge/version-v5.3.2--Lag--Free-green?style=for-the-badge)
-![License](https://img.shields.io/badge/License-GPL-blue?style=for-the-badge)
-![WoW](https://img.shields.io/badge/WoW-1.12.1--Turtle-orange?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-5.3.3-blue?style=for-the-badge) ![Status](https://img.shields.io/badge/Status-Optimized-success?style=for-the-badge) ![TurtleWoW](https://img.shields.io/badge/TurtleWoW-1.17-orange?style=for-the-badge)
 
-> **The most powerful questing engine for World of Warcraft (Vanilla/Turtle).** Intervenido quirúrgicamente por **DarckRovert** para eliminar el lag y micro-cortes en el motor de renderizado de **El Séquito del Terror**.
+La base de datos y rastreador de misiones definitivo para World of Warcraft Vanilla, optimizado quirúrgicamente para **Turtle WoW** y localizado profesionalmente por **El Séquito del Terror**.
 
----
+## 🚀 Características Diamond-Tier [v5.3.3]
 
-## ⚡ Ingeniería de Optimización (Lag-Free Edition)
+- **Motor Reactivo [Lag-Free]**: Eliminación total del stuttering mediante arquitectura basada en eventos. Cero escaneos redundantes en segundo plano.
+- **Sincronización Turtle v1.17**: Soporte nativo para Isla Lapidis, Balor y zonas custom con mapeo técnico de alta precisión.
+- **Localización Inteligente esES**: Sistema de fusión de datos que preserva la jerarquía técnica de las zonas mientras muestra nombres 100% en español.
+- **Corrección Nivel 60**: GPS activo y funcional independientemente del nivel del personaje para no perder rastro de misiones de prestigio o lore.
+- **Auditoría /db status**: Herramienta de diagnóstico integrada para verificar la integridad de la DB y la visibilidad de zonas custom.
 
-A diferencia de la versión original de Shagu, la **Séquito Edition** ha sido optimizada para maximizar los FPS en **Turtle WoW**, con un motor de búsqueda de base de datos rediseñado.
+## 🛠️ Instalación
 
-### 🧩 OPTIMIZATION MATRIX (MATRIZ DE MEJORAS)
+1. Descarga el repositorio oficial desde [GitHub DarckRovert](https://github.com/DarckRovert/pfQuest).
+2. Coloca la carpeta `pfQuest` en `Interface\AddOns\`.
+3. Asegúrate de que el nombre de la carpeta sea exactamente `pfQuest`.
+4. Borra la carpeta `WDB` antes de iniciar para asegurar la carga de la nueva estructura de datos.
 
-| Módulo | Tipo de Cambio | Impacto | Resumen Técnico |
-| :--- | :--- | :---: | :--- |
-| **Quest Core** | Throttling Sync | 0.2s | Reducción de carga OnUpdate en un 75% |
-| **Navigator** | Route Throttle | 0.25s | Cálculo asíncrono de distancias para flecha |
-| **Tracker** | Alpha Fader | 0.1s | Suavizado de visibilidad sin saturar CPU |
-| **Map Nodes** | Anim Controller | 0.05s | Estabilidad de iconos al navegar el mapa |
-| **DB Patch** | Turtle WoW Lib | ✅ | Inclusión nativa de misiones de expansión |
+## ⌨️ Comandos de Consola
 
-### 📊 BENCHMARKS DE CPU (STUTTERING ANALYSIS)
+- `/db search [término]`: Busca cualquier NPC, Objeto o Misión.
+- `/db status`: Ejecuta un diagnóstico de salud del addon.
+- `/db scan`: Fuerza el escaneo de items del servidor.
+- `/db config`: Abre el panel de configuración avanzada.
 
-| Contexto | pfQuest Org | Optimized Ed. | Mejora de FPS |
-| :--- | :---: | :---: | :---: |
-| **40+ Misiones Activas** | High Lag | Smooth | +15 FPS |
-| **Navegación Mapa** | Stutter | Zero Stutter | High Stability |
-| **Vuelo (Flight Path)** | Constant Tick | Throttled | +5 FPS |
+## 🏛️ Gobernanza y Soporte
 
----
+Este proyecto se distribuye bajo la **Licencia MIT**. Para contribuir o reportar errores, consulta nuestra documentación oficial:
 
-## 🏗️ Suite de Documentación (Wiki)
-
-Conoce los detalles de la intervención técnica en nuestra base de conocimientos:
-
-- 📐 **[Arquitectura](file:///e:/Turtle%20Wow/Interface/AddOns/pfQuest/wiki/Arquitectura.md)**: Flujo de eventos y Throttling Engine.
-- ⚙️ **[Guía de API](file:///e:/Turtle%20Wow/Interface/AddOns/pfQuest/wiki/Guia_API.md)**: Puntos de entrada para desarrolladores.
-- ❓ **[FAQ](file:///e:/Turtle%20Wow/Interface/AddOns/pfQuest/wiki/FAQ.md)**: Solución a errores comunes.
-- 📖 **[Manual de Usuario](file:///e:/Turtle%20Wow/Interface/AddOns/pfQuest/wiki/Manual_Usuario.md)**: Guía completa de uso.
-
-## 🚀 Instalación Rápida (Pro-Flow)
-
-1.  **Limpieza**: Elimina cualquier versión previa de `pfQuest` en `AddOns/`.
-2.  **Despliegue**: Extrae en `Interface\AddOns\pfQuest\`.
-3.  **Soporte**: Activa `pfQuest-turtle` para ver misiones exclusivas de Turtle WoW.
-
-## 🔗 Ecosistema Oficial (DarckRovert)
-
-- [Live Streams (Twitch)](https://twitch.tv/darckrovert)
-- [Soporte & Donaciones](https://ko-fi.com/darckrovert)
-- [GitHub Oficial](https://github.com/DarckRovert)
-- [Web Corporativa](https://sequitodelterror.netlify.app/)
+- [Manual de Usuario](file:///e:/Turtle Wow/Interface/AddOns/pfQuest/wiki/Manual_Usuario.md)
+- [Arquitectura Técnica](file:///e:/Turtle Wow/Interface/AddOns/pfQuest/wiki/Arquitectura.md)
+- [Preguntas Frecuentes (FAQ)](file:///e:/Turtle Wow/Interface/AddOns/pfQuest/wiki/FAQ.md)
 
 ---
-© 2026 **DarckRovert** — El Séquito del Terror.
-*Optimizada para la conquista de Azeroth.*
+**Desarrollado y Mantenido por DarckRovert**
+[Twitch Official](https://twitch.tv/darckrovert) | [GitHub Organization](https://github.com/DarckRovert)

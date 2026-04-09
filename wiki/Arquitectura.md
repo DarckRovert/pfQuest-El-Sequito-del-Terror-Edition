@@ -1,16 +1,27 @@
-# 🏰 Arquitectura Técnica — pfQuest [LAG-FREE]
+# Arquitectura Técnica - pfQuest [Séquito]
 
-## 1. Engine de Optimización (Throttling)
-pfQuest [Séquito Edition] ha sido intervenido para mitigar el impacto en el render loop de WoW Vanilla:
-*   **OnUpdate Throttling**: Se ha reducido la frecuencia de actualización del motor de búsqueda de misiones de 1 tps (tick per second) a intervalos de 0.2s mediante una colas de prioridad asíncronas.
-*   **Caché Estática**: La base de datos de misiones se carga en una tabla hash optimizada al inicio, evitando búsquedas lineales costosas durante la navegación.
+pfQuest utiliza una arquitectura modular diseñada para el alto rendimiento en el cliente 1.12.1.
 
-## 2. Soporte Nativo Turtle WoW
-A diferencia de otras versiones, los parches de datos para las misiones exclusivas de Turtle WoW (Emerald Dream, etc.) están inyectados directamente en el core, eliminando la necesidad de addons de parches externos que causan inestabilidad.
+## Componentes Principales
 
-## 3. Navegador de Precisión
-El sistema de flecha de navegación utiliza un cálculo de distancia euclidiana suavizado mediante un filtro de paso bajo, evitando que la flecha "salte" violentamente durante giros rápidos o cambios de zona.
+1. **pfDatabase (Logic)**: Gestiona la carga, búsqueda y filtrado de datos. En la **v5.3.3**, se ha optimizado para ser puramente reactiva.
+2. **pfMap (Render)**: El motor gráfico que dibuja nodos en el Mapa Mundial y Minimapa. Utiliza un sistema de capas para priorizar iconos de misiones activas.
+3. **pfQuest.route (GPS)**: El motor de cálculo vectorial. Calcula distancias y ángulos para la flecha de navegación.
 
----
-© 2026 **DarckRovert** — El Séquito del Terror.
-*Soberanía Técnica Lag-Free Edition.*
+## Flujo de Datos [Lag-Free 1.17]
+
+```mermaid
+graph TD
+    A[Eventos WoW: QUEST_LOG_UPDATE] --> B{Motor Reactivo}
+    B -->|Trigger| C[Actualización de Diario]
+    C --> D[Búsqueda de Coordenadas]
+    D --> E[Render de Mapa]
+    E --> F[Actualización de Flecha GPS]
+    
+    subgraph Optimización
+    G[Jugador Estático] -.->|Inhibe| F
+    end
+```
+
+## Sistema de Fusión Inteligente
+Para resolver la coalición entre datos técnicos de Turtle WoW y localizaciones en español, implementamos en `patchtable.lua` un mecanismo de protección que guarda los nombres en el campo `.name` de la tabla de zonas, preservando los punteros de herencia de mapas (hierarchy).

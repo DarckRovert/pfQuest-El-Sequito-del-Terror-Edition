@@ -1,0 +1,31 @@
+name: Reporte de Error
+description: Reporta un error técnico o comportamiento inesperado.
+title: "[BUG]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gracias por reportar e integrar el ecosistema de **El Séquito**.
+  - type: textarea
+    id: description
+    attributes:
+      label: Descripción del Error
+      placeholder: Describe qué sucedió y qué esperabas que pasara.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Pasos para Reproducir
+      placeholder: |
+        1. Ir a...
+        2. Hacer click en...
+        3. El error aparece en...
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs o Mensajes de Error (Lua)
+      placeholder: Pega aquí cualquier error capturado por /db status o BugGrabber.

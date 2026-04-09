@@ -1,40 +1,25 @@
-# Changelog — El Séquito del Terror Edition (pfQuest) 📈⚖️
+# Changelog - pfQuest [Séquito del Terror Edition]
 
-Todos los cambios notables en este proyecto serán documentados en este archivo siguiendo el estándar **Diamond Tier** de **DarckRovert**.
+Todos los cambios notables en este proyecto serán documentados en este archivo.
 
----
+## [v5.3.3] - 2026-04-09 [Lag-Free 1.17]
 
-## [v5.3.6] — 2026-04-07 [Legacy-Hybrid]
+### Añadido
+- **Sincronización Turtle WoW v1.17**: Integración completa de coordenadas y misiones para Isla Lapidis y Balor (incluyendo NPC 92005 Sergeant Blackwell).
+- **Smart Localization Fusion**: Nuevo motor de unión de bases de datos que permite nombres en español sin romper la jerarquía técnica de las zonas custom.
+- **Suite de Documentación Diamond-Tier**: Wiki corporativa completa y gobernanza de repo.
 
-### ⚡ Optimización Quirúrgica (Restauración de Backup)
-- **Math Restore**: Regreso al motor matemático de la copia de seguridad (`x1.5 multiplier`). Eliminado el sistema de proyecciones dinámicas en tiempo real para recuperar los FPS perdidos.
-- **Event-Driven Hierarchy**: El caché del diario de misiones ahora se actualiza solo mediante eventos (`QUEST_LOG_UPDATE`), eliminando el bucle de procesamiento pesado en `OnUpdate`.
-- **Zero-Stutter Engine**: Unificación de bucles de cálculo. Ahora las distancias y los rangos se procesan en un único paso lineal.
-- **Arrow Fix**: Corregida la visibilidad de la flecha al sincronizar las coordenadas del jugador con la escala nativa del addon.
+### Corregido
+- **Navegación Nivel 60**: Eliminado el filtro restrictivo de "bajo nivel" que ocultaba la flecha de navegación al alcanzar el nivel máximo.
+- **Inconsistencia esES**: Corregido el error de tipos de datos en la tabla de zonas que causaba mapas vacíos en el cliente español.
 
----
+### Optimizado
+- **Motor Reactivo [Lag-Free]**: Eliminación total del bucle de escaneo persistente (polling) en el diario de misiones, delegando el procesamiento a eventos disparados por el juego.
+- **Throttling de Movimiento**: Reducción drástica del uso de CPU en el motor de rutas mediante la detección de inactividad del jugador.
 
-## [v5.3.4] — 2026-04-07 [Sovereign-Stability]
-
-## [v5.3.3] — 2026-04-07 [Sticky-Stability]
-
-## 📊 Matriz de Versiones
-
-| Versión | Fecha | Nombre Clave | Estado | Resumen |
-| :--- | :--- | :--- | :---: | :--- |
-| **5.3.6** | 2026-04-07 | **Legacy-Hybrid** | ✅ | Backup Math, Event-Driven, Zero-Stutter. |
-| **5.3.4** | 2026-04-07 | **Sovereign-Stability** | ✅ | ID-Based Tracking, Zero-Flicker, Shagu Vectors. |
-| **9.3.0** | 2026-03-25 | **Turtle-Expand** | ⚠️ | Integración Emerald Dream y zonas Custom. |
-| **9.2.0** | 2026-02-15 | **Stability** | ❌ | Versión inicial del ecosistema. |
+## [v5.3.2] - 2026-04-01
+- Estabilización inicial de traducciones esES.
+- Implementación de `/db status` para auditoría técnica.
 
 ---
-
-## [v9.3.0] — 2026-03-25
-
-### ✨ Características
-- **Turtle WoW Support**: Integración de misiones exclusivas (Emerald Dream, Hyjal, etc.).
-- **Map Focus**: Se ha mejorado la precisión de las coordenadas en zonas expansivas de Tel'Abim.
-
----
-© 2026 **DarckRovert** — El Séquito del Terror.
-*Optimizada para la conquista de Azeroth.*
+Para más información, visita la [Wiki](file:///e:/Turtle Wow/Interface/AddOns/pfQuest/wiki/Arquitectura.md).
