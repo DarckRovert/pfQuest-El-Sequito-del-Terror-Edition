@@ -3,7 +3,7 @@
 ## Author: El Sequito del Terror
 ## Notes: A Questhelper and Database -- Turtle WoW Edition
 ## Notes-ruRU: O6nervennyi pomoshchnik zadanij i baza dannykh
-## Version: 5.3.8 [Sync-Fix]
+## Version: 5.3.9 [LUA-Fix]
 ## OptionalDeps: pfUI
 ## SavedVariables: pfQuest_questcache, pfQuest_turtlecount
 ## SavedVariablesPerCharacter: pfQuest_config, pfBrowser_fav, pfQuest_history, pfQuest_colors, pfQuest_server, pfQuest_track

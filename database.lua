@@ -23,7 +23,7 @@ for _, db in pairs({ "items", "units", "objects", "quests", "refloot" }) do
 end
 
 -- SanitizeQuestTitle: Limpia prefijos como [12], [12+], (15), etc. 
-local function SanitizeQuestTitle(title)
+function SanitizeQuestTitle(title)
   if not title or type(title) ~= "string" or title == "" then return title end
   -- Remover prefijos entre corchetes o paréntesis al inicio
   local clean = string.gsub(title, "^%s*[%[%(].-[%]%)]%s*", "")

@@ -12,13 +12,6 @@ local function modulo(val, by)
   return val - math.floor(val/by)*by;
 end
 
--- SanitizeQuestTitle: Limpia prefijos como [12], [12+], (15), etc. 
-local function SanitizeQuestTitle(title)
-  if type(title) ~= "string" then return title end
-  -- Remover prefijos entre corchetes o paréntesis al inicio
-  local clean = string.gsub(title, "^%s*[%[%(].-[%]%)]%s*", "")
-  return clean
-end
 
 -- global coordinate projection cache
 pfQuest.route = pfQuest.route or CreateFrame("Frame", "pfQuestRoute", WorldFrame)

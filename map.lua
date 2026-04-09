@@ -7,13 +7,6 @@ local strfind, strlower = strfind, strlower
 local format = string.format
 local insert = table.insert
 
--- SanitizeQuestTitle: Limpia prefijos como [12], [12+], (15), etc. 
-local function SanitizeQuestTitle(title)
-  if type(title) ~= "string" then return title end
-  -- Remover prefijos entre corchetes o paréntesis al inicio
-  local clean = string.gsub(title, "^%s*[%[%(].-[%]%)]%s*", "")
-  return clean
-end
 
 local min, max, abs = math.min, math.max, math.abs
 local floor, ceil = floor or math.floor, ceil or math.ceil
