@@ -15,6 +15,14 @@ local GetTime = GetTime
 local UnitLevel, UnitRace, UnitClass = UnitLevel, UnitRace, UnitClass
 local UnitFactionGroup = UnitFactionGroup
 
+-- SanitizeQuestTitle: Limpia prefijos como [12], [12+], (15), etc. 
+local function SanitizeQuestTitle(title)
+  if type(title) ~= "string" then return title end
+  -- Remover prefijos entre corchetes o paréntesis al inicio
+  local clean = string.gsub(title, "^%s*[%[%(].-[%]%)]%s*", "")
+  return clean
+end
+
 -- Ensure pfQuestConfig.path exists (fallback if config.lua failed to set it)
 if not pfQuestConfig then
   pfQuestConfig = CreateFrame("Frame", "pfQuestConfig", UIParent)
@@ -840,6 +848,9 @@ end
 function pfDatabase:GetIDByName(name, db, partial, server)
   if not pfDB[db] then return nil end
   local ret = {}
+  
+  -- Sanitizar el nombre de entrada (especialmente para misiones)
+  local name = db == "quests" and SanitizeQuestTitle(name) or name
 
   -- Helper de búsqueda en una tabla específica
   local function SearchInTable(tbl)
@@ -1361,7 +1372,8 @@ end
 function pfDatabase:SearchQuestID(id, meta, maps)
   -- FALLBACK: Si id es un título (string), intentar resolver el ID numérico
   if type(id) == "string" then
-    for qid in pairs(pfDatabase:GetIDByName(id, "quests")) do
+    local cleanName = SanitizeQuestTitle(id)
+    for qid in pairs(pfDatabase:GetIDByName(cleanName, "quests")) do
       id = qid; break
     end
   end

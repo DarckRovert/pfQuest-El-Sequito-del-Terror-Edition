@@ -12,6 +12,14 @@ local tostring, tonumber, type = tostring, tonumber, type
 local GetTime = GetTime
 local UnitLevel = UnitLevel
 
+-- SanitizeQuestTitle: Limpia prefijos como [12], [12+], (15), etc. 
+local function SanitizeQuestTitle(title)
+  if type(title) ~= "string" then return title end
+  -- Remover prefijos entre corchetes o paréntesis al inicio
+  local clean = string.gsub(title, "^%s*[%[%(].-[%]%)]%s*", "")
+  return clean
+end
+
 pfQuest = pfQuest or CreateFrame("Frame")
 pfQuest.icons = {}
 
@@ -292,10 +300,24 @@ pfQuest:SetScript("OnUpdate", function()
           (pfQuest_config["trackingmethod"] ~= 2 or IsQuestWatched(entry[3]))
         then
           -- Verify the quest is still at the expected log position before searching.
-          -- Avoids adding a spurious complete_c node if the quest was turned in while queued.
-          local verifyTitle = entry[3] and compat.GetQuestLogTitle(entry[3])
-          if verifyTitle == entry[1] then
-            local meta = { ["addon"] = "PFQUEST", ["qlogid"] = entry[3] }
+          local qlogid = entry[3]
+          local verifyTitle = qlogid and compat.GetQuestLogTitle(qlogid)
+          
+          -- FALLBACK: Si el orden del registro cambió (verifyTitle ~= entry[1]), 
+          -- buscar la misión por título en todo el registro.
+          if verifyTitle ~= entry[1] then
+            qlogid = nil
+            for i=1,40 do
+              local t = compat.GetQuestLogTitle(i)
+              if t == entry[1] then
+                qlogid = i
+                break
+              end
+            end
+          end
+
+          if qlogid then
+            local meta = { ["addon"] = "PFQUEST", ["qlogid"] = qlogid }
             pfDatabase:SearchQuestID(entry[2], meta)
           end
         end
@@ -356,9 +378,10 @@ function pfQuest:UpdateQuestlog()
 
       -- add new quest to the questlog
       if not pfQuest.questlog[questid] then
-        table.insert(pfQuest.queue, { title, questid, qlogid, "NEW" })
+        local cleanTitle = SanitizeQuestTitle(title)
+        table.insert(pfQuest.queue, { cleanTitle, questid, qlogid, "NEW" })
         pfQuest.questlog_tmp[questid] = {
-          title = title,
+          title = cleanTitle,
           qlogid = qlogid,
           state = state,
         }
