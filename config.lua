@@ -179,7 +179,8 @@ pfQuestConfig:EnableMouse(true)
 pfQuestConfig:SetClampedToScreen(true)
 pfQuestConfig:RegisterEvent("ADDON_LOADED")
 pfQuestConfig:SetScript("OnEvent", function()
-  if arg1 == "pfQuest" or arg1 == "pfQuest-tbc" or arg1 == "pfQuest-wotlk" then
+  -- Detect if any pfQuest variant is being loaded
+  if arg1 and string.find(string.lower(arg1), "pfquest") then
     pfQuestConfig:LoadConfig()
     pfQuestConfig:MigrateHistory()
     pfQuestConfig:CreateConfigEntries(pfQuest_defconfig)
@@ -219,15 +220,29 @@ pfQuestConfig.vpos = 40
 pfUI.api.CreateBackdrop(pfQuestConfig, nil, true, 0.75)
 table.insert(UISpecialFrames, "pfQuestConfig")
 
--- detect current addon path
-local tocs = { "", "-master", "-tbc", "-wotlk" }
-for _, name in pairs(tocs) do
-  local current = string.format("pfQuest%s", name)
+-- detect current addon path and version
+pfQuestConfig.path = "Interface\\AddOns\\pfQuest"
+pfQuestConfig.version = "N/A"
+
+local tocs = { "pfQuest", "pfQuest-master", "pfQuest-tbc", "pfQuest-wotlk", "pfQuest-El-Sequito-del-Terror-Edition" }
+for _, current in pairs(tocs) do
   local _, title = GetAddOnInfo(current)
   if title then
     pfQuestConfig.path = "Interface\\AddOns\\" .. current
-    pfQuestConfig.version = tostring(GetAddOnMetadata(current, "Version"))
+    pfQuestConfig.version = tostring(GetAddOnMetadata(current, "Version") or "N/A")
     break
+  end
+end
+
+-- Fallback: scan all addons if not found in common list
+if pfQuestConfig.version == "N/A" then
+  for i=1, GetNumAddOns() do
+    local name, title = GetAddOnInfo(i)
+    if name and string.find(string.lower(name), "pfquest") then
+      pfQuestConfig.path = "Interface\\AddOns\\" .. name
+      pfQuestConfig.version = tostring(GetAddOnMetadata(name, "Version") or "N/A")
+      break
+    end
   end
 end
 
