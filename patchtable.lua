@@ -216,8 +216,8 @@ updatecheck:SetScript("OnEvent", function()
     pfQuest:Debug("|cff00ccff[Sequito]|r TurtleWoW: |cff33ffcc" .. count .. "|r misiones exclusivas cargadas.")
   end
 
-  if not pfQuest_turtlecount or pfQuest_turtlecount ~= count then
-    pfQuest:Debug("|cff00ccff[Sequito]|r Nuevas misiones detectadas. Recargando |cff33ffccCache|r")
+  if not pfQuest_turtlecount or pfQuest_turtlecount ~= count or count == 0 then
+    pfQuest:Debug("|cff00ccff[Sequito]|r Sincronización de misiones detectada. Limpiando |cff33ffccCache|r...")
     pfQuest_questcache = {}
   end
 
