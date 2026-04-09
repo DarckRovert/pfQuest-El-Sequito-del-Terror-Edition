@@ -5,6 +5,16 @@ local compat = pfQuestCompat
 local pairs, ipairs, next = pairs, ipairs, next
 local strfind, strlower = strfind, strlower
 local format = string.format
+local insert = table.insert
+
+-- SanitizeQuestTitle: Limpia prefijos como [12], [12+], (15), etc. 
+local function SanitizeQuestTitle(title)
+  if type(title) ~= "string" then return title end
+  -- Remover prefijos entre corchetes o paréntesis al inicio
+  local clean = string.gsub(title, "^%s*[%[%(].-[%]%)]%s*", "")
+  return clean
+end
+
 local min, max, abs = math.min, math.max, math.abs
 local floor, ceil = floor or math.floor, ceil or math.ceil
 local getn, insert, concat = table.getn, table.insert, table.concat
@@ -892,7 +902,8 @@ function pfMap:UpdateNodes()
 
         -- write points to the route plan
         local qid = tonumber(pfMap.pins[i].questid)
-        local inLog = (qid and pfQuest.questlog[qid]) or (pfMap.pins[i].title and pfQuest.questlog[pfMap.pins[i].title])
+        local cleanTitle = SanitizeQuestTitle(pfMap.pins[i].title)
+        local inLog = (qid and pfQuest.questlog[qid]) or (cleanTitle and pfQuest.questlog[cleanTitle])
         if ( inLog or pfMap.pins[i].arrow == true ) and
           ( ( pfQuest_config["routecluster"] == "1" and pfMap.pins[i].layer >= 9 ) or
           ( pfQuest_config["routeender"] == "1" and pfMap.pins[i].layer == 4) or

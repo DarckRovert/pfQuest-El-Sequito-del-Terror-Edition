@@ -12,6 +12,14 @@ local function modulo(val, by)
   return val - math.floor(val/by)*by;
 end
 
+-- SanitizeQuestTitle: Limpia prefijos como [12], [12+], (15), etc. 
+local function SanitizeQuestTitle(title)
+  if type(title) ~= "string" then return title end
+  -- Remover prefijos entre corchetes o paréntesis al inicio
+  local clean = string.gsub(title, "^%s*[%[%(].-[%]%)]%s*", "")
+  return clean
+end
+
 -- global coordinate projection cache
 pfQuest.route = pfQuest.route or CreateFrame("Frame", "pfQuestRoute", WorldFrame)
 pfQuest.route.coords = {}
@@ -33,8 +41,9 @@ end
 
 pfQuest.route.LockToQuest = function(self, title, id)
   if not title then return end
-  self.activeQuest = title
-  self.activeQuestID = id or (pfQuest.questlog and pfQuest.questlog[title] and pfQuest.questlog[title].id)
+  local cleanTitle = SanitizeQuestTitle(title)
+  self.activeQuest = cleanTitle
+  self.activeQuestID = id or (pfQuest.questlog and pfQuest.questlog[cleanTitle] and pfQuest.questlog[cleanTitle].id)
   self.lockX, self.lockY = nil, nil
   
   local nearest = nil
@@ -262,7 +271,9 @@ pfQuest.route.arrow:SetScript("OnUpdate", function()
   local dir = atan2(dx, -dy)
   dir = dir > 0 and (math.pi*2) - dir or -dir
   if dir < 0 then dir = dir + 360 end
-  local angle = math.rad(dir) - pfQuestCompat.GetPlayerFacing()
+  
+  local facing = pfQuestCompat.GetPlayerFacing() or 0
+  local angle = math.rad(dir) - facing
 
   -- Visual texture updates
   local perc = math.abs(((math.pi - math.abs(angle)) / math.pi))
