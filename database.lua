@@ -477,7 +477,7 @@ function pfDatabase:Reload()
   professions = pfDB["professions"]["loc"]
 end
 
-pfDatabase.Reload()
+pfDatabase:Reload()
 
 -- Inverted name index: maps name -> {id, id, ...} for O(1) exact-match lookups.
 -- Built once after locale is known. Used by GetIDByName to skip full-table scans
@@ -2146,4 +2146,38 @@ function pfDatabase:QueryServer()
   end
 
   frame:SetScript("OnEvent", OnQuestQueryComplete)  -- Set the event handler
+end
+
+function pfDatabase:GetStatus()
+  local status = {}
+  -- Count total quests and turtle-specific ones
+  status.total_quests = 0
+  status.turtle_quests = 0
+  if pfDB["quests"] and pfDB["quests"]["data"] then
+    for id in pairs(pfDB["quests"]["data"]) do
+      status.total_quests = status.total_quests + 1
+      if tonumber(id) and tonumber(id) >= 40000 then
+        status.turtle_quests = status.turtle_quests + 1
+      end
+    end
+  end
+
+  -- Check name index
+  status.index_size = 0
+  if self.nameIndex and self.nameIndex["quests"] then
+    for _ in pairs(self.nameIndex["quests"]) do
+      status.index_size = status.index_size + 1
+    end
+  end
+
+  -- Check active locale
+  status.loc = GetLocale()
+  if status.loc == "esMX" then status.loc = "esES" end
+  status.active_loc = pfDatabase.dbstring or "N/A"
+
+  -- Check frames
+  status.browser = pfBrowser and "Cargado" or "MISSING"
+  status.config = pfQuestConfig and "Cargado" or "MISSING"
+
+  return status
 end

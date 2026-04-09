@@ -255,18 +255,25 @@ SlashCmdList["PFDB"] = function(input, editbox)
   if (arg1 == "clean") then
     pfMap:DeleteNode("PFDB")
     pfMap:UpdateNodes()
+    DEFAULT_CHAT_FRAME:AddMessage("|cff33ffccpf|cffffffffQuest|r: |cff00ccffMapa limpiado.|r")
     return
   end
 
   -- argument: reset
   if (arg1 == "reset") then
     pfQuest:ResetAll()
+    DEFAULT_CHAT_FRAME:AddMessage("|cff33ffccpf|cffffffffQuest|r: |cff00ccffCaché y marcadores reiniciados.|r")
     return
   end
 
   -- argument: show
   if (arg1 == "show") then
-    if pfBrowser then pfBrowser:Show() end
+    if pfBrowser then 
+      pfBrowser:Show() 
+      DEFAULT_CHAT_FRAME:AddMessage("|cff33ffccpf|cffffffffQuest|r: |cff00ccffAbriendo Database Browser...|r")
+    else
+      DEFAULT_CHAT_FRAME:AddMessage("|cff33ffccpf|cffffffffQuest|r: |cffff3333Error: El módulo pfBrowser no está cargado.|r")
+    end
     return
   end
 
@@ -322,6 +329,31 @@ SlashCmdList["PFDB"] = function(input, editbox)
     -- argument: query
   if (arg1 == "query") then
     pfDatabase:QueryServer()
+    return
+  end
+
+  -- argument: status
+  if (arg1 == "status") then
+    local s = pfDatabase:GetStatus()
+    DEFAULT_CHAT_FRAME:AddMessage("|cff33ffcc[pfQuest Séquito del Terror Edition: Auditoría]|r")
+    DEFAULT_CHAT_FRAME:AddMessage("|cffcccccc- Misiones Totales:|r |cffffffff" .. s.total_quests .. "|r")
+    DEFAULT_CHAT_FRAME:AddMessage("|cffcccccc- Misiones Turtle (1.17):|r |cff33ffcc" .. s.turtle_quests .. "|r")
+    DEFAULT_CHAT_FRAME:AddMessage("|cffcccccc- Índice de Nombres:|r |cff33ffcc" .. s.index_size .. " entradas|r")
+    DEFAULT_CHAT_FRAME:AddMessage("|cffcccccc- Localización Activa:|r " .. s.active_loc)
+    DEFAULT_CHAT_FRAME:AddMessage("|cffcccccc- Estado de Interfaz:|r Browser(" .. s.browser .. "), Config(" .. s.config .. ")")
+    
+    if s.turtle_quests > 2000 then
+      DEFAULT_CHAT_FRAME:AddMessage("|cff00ff00[OK]|r Base de datos extendida cargada correctamente.")
+    else
+      DEFAULT_CHAT_FRAME:AddMessage("|cffff3333[ERROR]|r Base de datos extendida no detectada o incompleta.")
+    end
+
+    if s.index_size > 5000 then
+      DEFAULT_CHAT_FRAME:AddMessage("|cff00ff00[OK]|r Indexación completa. Las búsquedas deberían funcionar.")
+    else
+      DEFAULT_CHAT_FRAME:AddMessage("|cffff3333[ADVERTENCIA]|r Índice reducido. Las búsquedas en español podrían fallar.")
+    end
+
     return
   end
 
