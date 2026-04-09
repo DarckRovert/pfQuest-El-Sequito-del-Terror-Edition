@@ -465,7 +465,7 @@ end
 
 -- add database shortcuts
 local items, units, objects, quests, zones, refloot, itemreq, areatrigger, professions
-pfDatabase.Reload = function()
+function pfDatabase:Reload()
   items = pfDB["items"]["data"]
   units = pfDB["units"]["data"]
   objects = pfDB["objects"]["data"]
@@ -491,11 +491,14 @@ pfDatabase.lastQuestGiversSet = {}
 pfDatabase.staticRejectSet = {}
 
 function pfDatabase:BuildNameIndex()
+  if not self.nameIndex then self.nameIndex = {} end
   local idx = self.nameIndex
   -- clear existing index in-place
   for db in pairs(idx) do
-    for name in pairs(idx[db]) do
-      idx[db][name] = nil
+    if idx[db] then
+      for name in pairs(idx[db]) do
+        idx[db][name] = nil
+      end
     end
     idx[db] = nil
   end
@@ -516,8 +519,12 @@ function pfDatabase:BuildNameIndex()
   end
 
   -- locale tables may have changed; force SearchQuests to re-add all nodes
-  for id in pairs(self.lastQuestGiversSet) do
-    self.lastQuestGiversSet[id] = nil
+  if self.lastQuestGiversSet then
+    for id in pairs(self.lastQuestGiversSet) do
+      self.lastQuestGiversSet[id] = nil
+    end
+  end
+end
   end
 end
 
@@ -1371,7 +1378,7 @@ function pfDatabase:SearchQuestID(id, meta, maps)
     end
 
     -- search quest-ender
-    if quests[id]["end"] then
+    if quests[id] and quests[id]["end"] then
       -- units
       if quests[id]["end"]["U"] then
         for _, unit in pairs(quests[id]["end"]["U"]) do

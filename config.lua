@@ -224,15 +224,31 @@ table.insert(UISpecialFrames, "pfQuestConfig")
 pfQuestConfig.path = "Interface\\AddOns\\pfQuest"
 pfQuestConfig.version = "N/A"
 
+local current_addon = "pfQuest"
 local tocs = { "pfQuest", "pfQuest-master", "pfQuest-tbc", "pfQuest-wotlk", "pfQuest-El-Sequito-del-Terror-Edition" }
-for _, current in pairs(tocs) do
-  local _, title = GetAddOnInfo(current)
-  if title then
-    pfQuestConfig.path = "Interface\\AddOns\\" .. current
-    pfQuestConfig.version = tostring(GetAddOnMetadata(current, "Version") or "N/A")
+
+-- Try to find our folder name among known candidates first
+for _, name in pairs(tocs) do
+  local name_exists = GetAddOnInfo(name)
+  if name_exists then
+    current_addon = name
     break
   end
 end
+
+-- Final fallback: search for ANY addon that contains "pfQuest" in its name
+if not GetAddOnInfo(current_addon) then
+  for i=1, GetNumAddOns() do
+    local name = GetAddOnInfo(i)
+    if name and string.find(string.lower(name), "pfquest") then
+      current_addon = name
+      break
+    end
+  end
+end
+
+pfQuestConfig.path = "Interface\\AddOns\\" .. current_addon
+pfQuestConfig.version = tostring(GetAddOnMetadata(current_addon, "Version") or "N/A")
 
 -- Fallback: scan all addons if not found in common list
 if pfQuestConfig.version == "N/A" then

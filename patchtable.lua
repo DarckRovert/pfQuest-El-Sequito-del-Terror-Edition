@@ -96,15 +96,24 @@ end
 
 -- Reload all pfQuest internal database shortcuts after DB merge,
 -- then rebuild the name index to include Turtle WoW NPCs/objects/items.
-pfDatabase:Reload()
-pfDatabase:BuildNameIndex()
+if pfDatabase.Reload then
+  DEFAULT_CHAT_FRAME:AddMessage("|cff00ccff[Séquito]|r Recargando accesos directos de la base de datos...")
+  pfDatabase:Reload()
+end
+
+if pfDatabase.BuildNameIndex then
+  DEFAULT_CHAT_FRAME:AddMessage("|cff00ccff[Séquito]|r Reconstruyendo índice de nombres...")
+  pfDatabase:BuildNameIndex()
+end
 
 -- Free turtle locale patch tables now that they've been merged into loc
 for _, db in pairs(dbs) do
-  pfDB[db]["data-turtle"] = nil
-  pfDB[db][loc.."-turtle"]  = nil
-  pfDB[db]["enUS-turtle"]   = nil
-  if TURTLE_DE_PATCH then pfDB[db]["deDE-turtle"] = nil end
+  if pfDB[db] then
+    pfDB[db]["data-turtle"] = nil
+    pfDB[db][loc.."-turtle"]  = nil
+    pfDB[db]["enUS-turtle"]   = nil
+    if TURTLE_DE_PATCH then pfDB[db]["deDE-turtle"] = nil end
+  end
 end
 pfDB["minimap-turtle"] = nil
 pfDB["meta-turtle"]    = nil
