@@ -525,8 +525,6 @@ function pfDatabase:BuildNameIndex()
     end
   end
 end
-  end
-end
 
 -- BuildStaticRejectSet
 -- Pre-computes the set of quest IDs that can never pass QuestFilter for this
