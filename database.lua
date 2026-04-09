@@ -17,7 +17,7 @@ local UnitFactionGroup = UnitFactionGroup
 
 -- SanitizeQuestTitle: Limpia prefijos como [12], [12+], (15), etc. 
 local function SanitizeQuestTitle(title)
-  if type(title) ~= "string" then return title end
+  if not title or type(title) ~= "string" or title == "" then return title end
   -- Remover prefijos entre corchetes o paréntesis al inicio
   local clean = string.gsub(title, "^%s*[%[%(].-[%]%)]%s*", "")
   return clean
@@ -854,15 +854,17 @@ function pfDatabase:GetIDByName(name, db, partial, server)
 
   -- Helper de búsqueda en una tabla específica
   local function SearchInTable(tbl)
-    if not tbl then return end
+    if not tbl or not name then return end
+    local lower_name = strlower(name)
     for id, loc_entry in pairs(tbl) do
       local loc = db == "quests" and loc_entry["T"] or loc_entry
 
       local custom = server and pfQuest_server[db] and pfQuest_server[db][id] or not server
-      if loc and name then
-        if partial == true and strfind(strlower(loc), strlower(name), 1, true) and custom then
+      if loc and type(loc) == "string" then
+        local lower_loc = strlower(loc)
+        if partial == true and strfind(lower_loc, lower_name, 1, true) and custom then
           ret[id] = loc
-        elseif partial == "LOWER" and strlower(loc) == strlower(name) and custom then
+        elseif partial == "LOWER" and lower_loc == lower_name and custom then
           ret[id] = loc
         elseif loc == name and custom then
           ret[id] = loc

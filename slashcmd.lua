@@ -28,6 +28,7 @@ SlashCmdList["PFDB"] = function(input, editbox)
     DEFAULT_CHAT_FRAME:AddMessage("|cff33ffcc/db|cffffffff reset |cffcccccc - " .. (L["Reset Map"] or "Reset Map"))
     DEFAULT_CHAT_FRAME:AddMessage("|cff33ffcc/db|cffffffff scan |cffcccccc - " .. (L["Scan the server for custom items"] or "Scan the server for custom items"))
     DEFAULT_CHAT_FRAME:AddMessage("|cff33ffcc/db|cffffffff query |cffcccccc - " .. (L["Query the server for completed quests"] or "Query the server for completed quests"))
+    DEFAULT_CHAT_FRAME:AddMessage("|cff33ffcc/db|cffffffff status |cffcccccc - " .. "Mostrar estado y auditoría de la base de datos")
     return
   end
 
