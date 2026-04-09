@@ -505,9 +505,10 @@ function pfDatabase:BuildNameIndex()
 
   for _, db in pairs({ "units", "objects", "items", "quests" }) do
     idx[db] = {}
-    -- SAFETY: guard against nil loc table (can happen in broken init sequences)
-    if pfDB[db] and pfDB[db]["loc"] then
-      for id, locname in pairs(pfDB[db]["loc"]) do
+    -- Helper para indexar una tabla dada
+    local function AddToIndex(tbl)
+      if not tbl then return end
+      for id, locname in pairs(tbl) do
         if locname then
           local name = (db == "quests") and locname["T"] or locname
           if name and name ~= "" then
@@ -518,6 +519,13 @@ function pfDatabase:BuildNameIndex()
           end
         end
       end
+    end
+
+    -- Indexar localización activa
+    AddToIndex(pfDB[db] and pfDB[db]["loc"])
+    -- Indexar base maestra enUS (bilingüismo)
+    if pfDB[db] and pfDB[db]["enUS-saved"] and pfDB[db]["enUS-saved"] ~= pfDB[db]["loc"] then
+      AddToIndex(pfDB[db]["enUS-saved"])
     end
   end
 
@@ -833,19 +841,31 @@ function pfDatabase:GetIDByName(name, db, partial, server)
   if not pfDB[db] then return nil end
   local ret = {}
 
-  for id, loc_entry in pairs(pfDB[db]["loc"]) do
-    local loc = db == "quests" and loc_entry["T"] or loc_entry
+  -- Helper de búsqueda en una tabla específica
+  local function SearchInTable(tbl)
+    if not tbl then return end
+    for id, loc_entry in pairs(tbl) do
+      local loc = db == "quests" and loc_entry["T"] or loc_entry
 
-    local custom = server and pfQuest_server[db] and pfQuest_server[db][id] or not server
-    if loc and name then
-      if partial == true and strfind(strlower(loc), strlower(name), 1, true) and custom then
-        ret[id] = loc
-      elseif partial == "LOWER" and strlower(loc) == strlower(name) and custom then
-        ret[id] = loc
-      elseif loc == name and custom then
-        ret[id] = loc
+      local custom = server and pfQuest_server[db] and pfQuest_server[db][id] or not server
+      if loc and name then
+        if partial == true and strfind(strlower(loc), strlower(name), 1, true) and custom then
+          ret[id] = loc
+        elseif partial == "LOWER" and strlower(loc) == strlower(name) and custom then
+          ret[id] = loc
+        elseif loc == name and custom then
+          ret[id] = loc
+        end
       end
     end
+  end
+
+  -- 1. Buscar en localización activa
+  SearchInTable(pfDB[db]["loc"])
+
+  -- 2. Bilingüismo: Si no hay resultados y existe enUS-saved, buscar ahí
+  if next(ret) == nil and pfDB[db]["enUS-saved"] and pfDB[db]["enUS-saved"] ~= pfDB[db]["loc"] then
+    SearchInTable(pfDB[db]["enUS-saved"])
   end
 
   return ret
@@ -1339,6 +1359,13 @@ end
 -- Adds map nodes for each objective and involved units
 -- Returns its map table
 function pfDatabase:SearchQuestID(id, meta, maps)
+  -- FALLBACK: Si id es un título (string), intentar resolver el ID numérico
+  if type(id) == "string" then
+    for qid in pairs(pfDatabase:GetIDByName(id, "quests")) do
+      id = qid; break
+    end
+  end
+
   if not quests[id] then return end
   local maps = maps or {}
   local meta = meta or {}
@@ -1668,7 +1695,8 @@ function pfDatabase:QuestFilter(id, plevel, pclass, prace)
   if plevel < 60 and quests[id]["lvl"] and quests[id]["lvl"] < plevel - 4 and pfQuest_config["showlowlevel"] == "0" then return end
 
   -- hide highlevel quests (or show those that are 3 levels above)
-  if quests[id]["min"] and quests[id]["min"] > plevel + ( pfQuest_config["showhighlevel"] == "1" and 3 or 0 ) then return end
+  -- Bypass at level 60+ (allow elite and turtle content)
+  if plevel < 60 and quests[id]["min"] and quests[id]["min"] > plevel + ( pfQuest_config["showhighlevel"] == "1" and 3 or 0 ) then return end
 
   -- hide event quests
   if quests[id]["event"] and pfQuest_config["showfestival"] == "0" then return end
@@ -1836,7 +1864,7 @@ function pfDatabase:GetQuestIDs(qid)
   -- FALLBACK: Si no hay coincidencias exactas, buscar en la base de datos maestra (enUS)
   -- Esto es necesario porque pairs() no recorre el metatable.
   if tcount == 0 then
-    for id, data in pairs(pfDB["quests"]["enUS"] or {}) do
+    for id, data in pairs(pfDB["quests"]["enUS-saved"] or {}) do
        if quests[id] and data.T == title then tcount = tcount + 1 end
     end
   end
@@ -1857,7 +1885,7 @@ function pfDatabase:GetQuestIDs(qid)
     end
     -- Si no hay éxito, buscar en enUS como último recurso
     if not ttitle then
-      for id, data in pairs(pfDB["quests"]["enUS"] or {}) do
+      for id, data in pairs(pfDB["quests"]["enUS-saved"] or {}) do
         if quests[id] and data.T then
           tscore = lev(data.T, title, tbest)
           if tscore < tbest then
