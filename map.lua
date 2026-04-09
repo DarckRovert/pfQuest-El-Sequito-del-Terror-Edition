@@ -903,8 +903,12 @@ function pfMap:UpdateNodes()
         -- write points to the route plan
         local qid = tonumber(pfMap.pins[i].questid)
         local cleanTitle = SanitizeQuestTitle(pfMap.pins[i].title)
+        
+        -- Lock targeting: check if this is the active quest locked by the user
+        local isTarget = ( pfQuest.route and pfQuest.route.activeQuest == cleanTitle )
+        
         local inLog = (qid and pfQuest.questlog[qid]) or (cleanTitle and pfQuest.questlog[cleanTitle])
-        if ( inLog or pfMap.pins[i].arrow == true ) and
+        if ( inLog or pfMap.pins[i].arrow == true or isTarget ) and
           ( ( pfQuest_config["routecluster"] == "1" and pfMap.pins[i].layer >= 9 ) or
           ( pfQuest_config["routeender"] == "1" and pfMap.pins[i].layer == 4) or
           ( pfQuest_config["routestarter"] == "1" and pfMap.pins[i].layer == 1 and pfMap.pins[i].texture) or

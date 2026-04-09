@@ -15,6 +15,13 @@ local GetTime = GetTime
 local UnitLevel, UnitRace, UnitClass = UnitLevel, UnitRace, UnitClass
 local UnitFactionGroup = UnitFactionGroup
 
+-- Salvaguarda de Bases de Datos Maestro (enUS) para soporte bilingüe
+for _, db in pairs({ "items", "units", "objects", "quests", "refloot" }) do
+  if pfDB[db] and pfDB[db]["enUS"] and not pfDB[db]["enUS-saved"] then
+    pfDB[db]["enUS-saved"] = pfDB[db]["enUS"]
+  end
+end
+
 -- SanitizeQuestTitle: Limpia prefijos como [12], [12+], (15), etc. 
 local function SanitizeQuestTitle(title)
   if not title or type(title) ~= "string" or title == "" then return title end
@@ -446,6 +453,12 @@ CreateFrame("Frame", "pfQuestLocaleCheck", UIParent):SetScript("OnUpdate", funct
       pfDatabase.localized = true
       pfDatabase:BuildNameIndex()
       pfDatabase:BuildStaticRejectSet()
+      
+      -- GRAVITY PATCH: Forzar un mapeo inicial para asegurar que la flecha tenga qué rastrear
+      if pfQuest.updateQuestGivers ~= nil then
+        pfQuest.updateQuestGivers = true
+      end
+      
       this:Hide()
     end
   end
@@ -520,20 +533,29 @@ function pfDatabase:BuildNameIndex()
         if locname then
           local name = (db == "quests") and locname["T"] or locname
           if name and name ~= "" then
-            if not idx[db][name] then
-              idx[db][name] = {}
-            end
+            -- Indexar nombre original
+            if not idx[db][name] then idx[db][name] = {} end
             insert(idx[db][name], id)
+            
+            -- Indexar nombre sanitizado (si es distinto)
+            local clean = SanitizeQuestTitle(name)
+            if clean ~= name then
+              if not idx[db][clean] then idx[db][clean] = {} end
+              insert(idx[db][clean], id)
+            end
           end
         end
       end
     end
 
-    -- Indexar localización activa
-    AddToIndex(pfDB[db] and pfDB[db]["loc"])
-    -- Indexar base maestra enUS (bilingüismo)
-    if pfDB[db] and pfDB[db]["enUS-saved"] and pfDB[db]["enUS-saved"] ~= pfDB[db]["loc"] then
+    -- 1. Indexar base maestra enUS (bilingüismo preventivo)
+    if pfDB[db] and pfDB[db]["enUS-saved"] then
       AddToIndex(pfDB[db]["enUS-saved"])
+    end
+    
+    -- 2. Indexar localización activa (sobrevive al final)
+    if pfDB[db] and pfDB[db]["loc"] and pfDB[db]["loc"] ~= pfDB[db]["enUS-saved"] then
+      AddToIndex(pfDB[db]["loc"])
     end
   end
 

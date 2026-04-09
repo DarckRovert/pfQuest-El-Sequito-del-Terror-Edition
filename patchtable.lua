@@ -100,13 +100,11 @@ end
 
 -- Reload all pfQuest internal database shortcuts after DB merge,
 -- then rebuild the name index to include Turtle WoW NPCs/objects/items.
+-- Rebuild name index after data merge
 if pfDatabase.Reload then
-  DEFAULT_CHAT_FRAME:AddMessage("|cff00ccff[Séquito]|r Recargando accesos directos de la base de datos...")
   pfDatabase:Reload()
 end
-
 if pfDatabase.BuildNameIndex then
-  DEFAULT_CHAT_FRAME:AddMessage("|cff00ccff[Séquito]|r Reconstruyendo índice de nombres...")
   pfDatabase:BuildNameIndex()
 end
 

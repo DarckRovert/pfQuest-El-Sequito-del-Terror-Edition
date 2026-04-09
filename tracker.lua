@@ -297,10 +297,12 @@ function tracker.ButtonClick()
   elseif expand_states[this.title] == 0 then
     if pfQuest.route and pfQuest.route.LockToQuest then pfQuest.route:LockToQuest(this.title) end
     expand_states[this.title] = 1
+    pfMap:UpdateNodes()
     tracker.ButtonEvent(this)
   elseif expand_states[this.title] == 1 then
     if pfQuest.route and pfQuest.route.LockToQuest then pfQuest.route:LockToQuest(this.title) end
     expand_states[this.title] = 0
+    pfMap:UpdateNodes()
     tracker.ButtonEvent(this)
   end
 end
