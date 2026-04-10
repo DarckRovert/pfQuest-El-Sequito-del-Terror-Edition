@@ -1,6 +1,11 @@
 -- multi api compat
 local compat = pfQuestCompat
 
+-- Initialize Globals Early to prevent 'nil index' errors
+pfQuest = pfQuest or CreateFrame("Frame")
+pfDatabase = pfDatabase or { icons = {} }
+pfDB = pfDB or {}
+
 -- Performance: cache frequently-used globals
 local pairs, ipairs, next = pairs, ipairs, next
 local strfind, strlower, strlen = strfind, strlower, strlen
@@ -17,17 +22,45 @@ local UnitFactionGroup = UnitFactionGroup
 
 -- Salvaguarda de Bases de Datos Maestro (enUS) para soporte bilingüe
 for _, db in pairs({ "items", "units", "objects", "quests", "refloot" }) do
-  if pfDB[db] and pfDB[db]["enUS"] and not pfDB[db]["enUS-saved"] then
+  if pfDB and pfDB[db] and pfDB[db]["enUS"] and not pfDB[db]["enUS-saved"] then
     pfDB[db]["enUS-saved"] = pfDB[db]["enUS"]
   end
 end
 
--- SanitizeQuestTitle: Limpia prefijos como [12], [12+], (15), etc. 
+-- SanitizeQuestTitle: Limpia prefijos como [12], [12+], (15), etc. y recorta espacios.
 function SanitizeQuestTitle(title)
   if not title or type(title) ~= "string" or title == "" then return title end
   -- Remover prefijos entre corchetes o paréntesis al inicio
   local clean = string.gsub(title, "^%s*[%[%(].-[%]%)]%s*", "")
+  -- Trim: Remover espacios al inicio y final
+  clean = string.gsub(clean, "^%s*(.-)%s*$", "%1")
   return clean
+end
+
+-- pfQuest.Normalize: Limpia y normaliza texto para comparaciones rápidas
+function pfQuest.Normalize(text)
+  if not text or type(text) ~= "string" then return "" end
+  local n = strlower(SanitizeQuestTitle(text))
+  return string.gsub(n, "[^%a%d]", "")
+end
+
+-- pfQuest.MatchQuests: Comparación difusa e insensible a formato para sincronización Diario-Mapa
+function pfQuest.MatchQuests(t1, t2)
+  if not t1 or not t2 then return nil end
+  if t1 == t2 then return true end
+  local s1, s2 = pfQuest.Normalize(t1), pfQuest.Normalize(t2)
+  return (s1 ~= "" and s1 == s2)
+end
+
+-- pfQuest.GetMatchCache: Genera una caché rápida de las misiones en el log para evitar lag
+function pfQuest.GetMatchCache()
+  local cache = {}
+  if not pfQuest.questlog then return cache end
+  for qid, data in pairs(pfQuest.questlog) do
+    local norm = pfQuest.Normalize(data.title)
+    if norm ~= "" then cache[norm] = qid end
+  end
+  return cache
 end
 
 -- Ensure pfQuestConfig.path exists (fallback if config.lua failed to set it)
@@ -38,8 +71,6 @@ end
 if not pfQuestConfig.path then
   pfQuestConfig.path = "Interface\\AddOns\\pfQuest"
 end
-
-pfDatabase = { icons = {} }
 
 local loc = GetLocale()
 -- Alias para clientes esMX (Latinoamérica)
@@ -438,7 +469,7 @@ CreateFrame("Frame", "pfQuestLocaleCheck", UIParent):SetScript("OnUpdate", funct
         for id, db in pairs(dbs) do
           -- switch noloc databases to enUS only if enUS-saved is available
           if noloc[db] and pfDB[db]["enUS-saved"] then
-            -- [GRAVITY FORCE] pfDB[db]["loc"] = pfDB[db]["enUS-saved"]
+            pfDB[db]["loc"] = pfDB[db]["enUS-saved"]
             switched = true
           end
           pfDatabase.dbstring = pfDatabase.dbstring

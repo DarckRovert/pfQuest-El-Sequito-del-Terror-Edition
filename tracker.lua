@@ -495,16 +495,14 @@ function tracker.ButtonEvent(self)
   tracker:SetWidth(width)
 end
 
-function tracker.ButtonAdd(title, node)
+function tracker.ButtonAdd(title, node, logCache)
   if not title or not node then return end
 
   local questid = title
-  local cleanTitle = SanitizeQuestTitle(title)
-  for qid, data in pairs(pfQuest.questlog) do
-    if data.title == cleanTitle then
-      questid = qid
-      break
-    end
+  local logCache = logCache or pfQuest.GetMatchCache()
+  local norm = pfQuest.Normalize(title)
+  if logCache[norm] then
+    questid = logCache[norm]
   end
 
   if tracker.mode == "QUEST_TRACKING" then -- skip everything that isn't in questlog
@@ -564,7 +562,7 @@ function tracker.ButtonAdd(title, node)
     tracker.buttons[id].bg:SetAllPoints()
     tracker.buttons[id].bg:SetAlpha(0)
 
-    tracker.buttons[id].text = tracker.buttons[id]:CreateFontString("pfQuestIDButton", "HIGH", "GameFontNormal")
+    tracker.buttons[id].text = tracker.buttons[id]:CreateFontString(nil, "HIGH", "GameFontNormal")
     tracker.buttons[id].text:SetFont(pfUI.font_default, fontsize)
     tracker.buttons[id].text:SetJustifyH("LEFT")
     tracker.buttons[id].text:SetPoint("TOPLEFT", 16, -4)

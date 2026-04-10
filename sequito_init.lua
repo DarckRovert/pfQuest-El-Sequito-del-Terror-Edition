@@ -19,7 +19,7 @@ init:SetScript("OnEvent", function()
 
   -- Welcome message
   local L = pfQuest_Loc
-  local ver = GetAddOnMetadata("pfQuest", "Version") or "v7.0.1-Terror"
+  local ver = (pfQuestConfig and pfQuestConfig.version) or GetAddOnMetadata("pfQuest-El-Sequito-del-Terror-Edition", "Version") or GetAddOnMetadata("pfQuest", "Version") or "v7.0.1-Terror"
   local welcome = "|cff00ccff[Séquito del Terror]|r: " .. 
                   string.format("|cffffffffpfQuest %s detectado. Elnazzareno guía tus pasos.|r", ver)
   
@@ -31,20 +31,27 @@ init:SetScript("OnEvent", function()
   DEFAULT_CHAT_FRAME:AddMessage(welcome)
 end)
 
--- Visual Overwrites
-if pfQuestConfig then
+-- Visual Overwrites (ejecutadas en PLAYER_ENTERING_WORLD para garantizar que los frames existen)
+local visual_init = CreateFrame("Frame")
+visual_init:RegisterEvent("PLAYER_ENTERING_WORLD")
+visual_init:SetScript("OnEvent", function()
+  this:UnregisterAllEvents()
+
+  -- Brand config window title
+  if pfQuestConfig and pfQuestConfig.title then
     pfQuestConfig.title:SetText("|cff33ffccpf|cffffffffQuest |r|cff00ccff[Séquito del Terror]|r")
     -- Pinkish border for the config window
     if pfQuestConfig.backdrop then
-        pfQuestConfig.backdrop:SetBackdropBorderColor(1, 0, 0.8, 1)
+      pfQuestConfig.backdrop:SetBackdropBorderColor(1, 0, 0.8, 1)
     end
-end
+  end
 
--- Brand the First-Run Initialization Window
-if pfQuestInit then
-    local old_title = pfQuestInit.title:GetText()
+  -- Brand the First-Run Initialization Window
+  if pfQuestInit and pfQuestInit.title then
+    local old_title = pfQuestInit.title:GetText() or ""
     pfQuestInit.title:SetText("|cff00ccff[Séquito del Terror]|r\n" .. old_title)
     if pfQuestInit.backdrop then
-        pfQuestInit.backdrop:SetBackdropBorderColor(1, 0, 0.8, 1)
+      pfQuestInit.backdrop:SetBackdropBorderColor(1, 0, 0.8, 1)
     end
-end
+  end
+end)

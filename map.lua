@@ -308,7 +308,7 @@ function pfMap:ShowTooltip(meta, tooltip)
                 local r,g,b = pfMap.tooltip:GetColor(objNum, objNeeded)
                 tooltip:AddLine("|cffaaaaaa- |r" .. monsterName .. ": " .. objNum .. "/" .. objNeeded, r, g, b)
               end
-            elseif table.getn(meta["item"]) > 0 and type == "item" and meta["droprate"] then
+            elseif meta["item"] and meta["item"][1] and type == "item" and meta["droprate"] then
               -- loot
               local i, j, itemName, objNum, objNeeded = strfind(text, pfUI.api.SanitizePattern(QUEST_OBJECTS_FOUND))
 
@@ -321,7 +321,7 @@ function pfMap:ShowTooltip(meta, tooltip)
                   tooltip:AddLine("|cffaaaaaa- |r" .. itemName .. ": " .. objNum .. "/" .. objNeeded .. " |cff555555[|cff" .. lootcolor .. meta["droprate"] .. "%|cff555555]", r, g, b)
                 end
               end
-            elseif table.getn(meta["item"]) > 0 and type == "item" and meta["sellcount"] then
+            elseif meta["item"] and meta["item"][1] and type == "item" and meta["sellcount"] then
               -- vendor
               local i, j, itemName, objNum, objNeeded = strfind(text, pfUI.api.SanitizePattern(QUEST_OBJECTS_FOUND))
 
@@ -383,7 +383,7 @@ function pfMap:ShowTooltip(meta, tooltip)
     end
   else
     -- handle non-quest objects
-    if meta["item"][1] and meta["itemid"] and not meta["itemlink"] then
+    if meta["item"] and meta["item"][1] and meta["itemid"] and not meta["itemlink"] then
       local _, _, itemQuality = GetItemInfo(meta["itemid"])
       if itemQuality then
         local itemColor = "|c" .. string.format("%02x%02x%02x%02x", 255,
@@ -396,10 +396,11 @@ function pfMap:ShowTooltip(meta, tooltip)
     end
 
     if meta["sellcount"] then
-      local item = meta["itemlink"] or "[" .. meta["item"][1] .. "]"
+      local item_name = (meta["item"] and meta["item"][1]) or "?"
+      local item = meta["itemlink"] or "[" .. item_name .. "]"
       local sellcount = tonumber(meta["sellcount"]) > 0 and " |cff555555[|cffcccccc" .. meta["sellcount"] .. "x" .. "|cff555555]" or ""
       tooltip:AddLine(pfQuest_Loc["Vendor"] .. ": " .. item .. sellcount, 1,1,1)
-    elseif meta["item"][1] then
+    elseif meta["item"] and meta["item"][1] then
       local item = meta["itemlink"] or "[" .. meta["item"][1] .. "]"
       local r,g,b = pfMap.tooltip:GetColor(tonumber(meta["droprate"]), 100)
       tooltip:AddLine("|cffffffff" .. pfQuest_Loc["Loot"] .. ": " .. item ..  " |cff555555[|r" .. meta["droprate"] .. "%|cff555555]", r,g,b)
@@ -874,6 +875,7 @@ function pfMap:UpdateNodes()
   local currentMap = pfMap:GetMapID(GetCurrentMapContinent(), GetCurrentMapZone())
   local scanGlobal = ( pfQuest.tracker.mode == "QUEST_TRACKING" or (pfQuest.route and pfQuest.route.activeQuest) )
   local i = 1
+  local logCache = pfQuest.GetMatchCache()
 
   -- reset tracker
   pfQuest.tracker.Reset()
@@ -883,39 +885,32 @@ function pfMap:UpdateNodes()
 
   -- refresh all nodes
   for addon, _ in pairs(pfMap.nodes) do
-    -- Global Scan Logic: Iterate over all maps if in Global/Quest mode
-    for map_id, map_nodes in pairs(pfMap.nodes[addon]) do
-      if map_id == currentMap or scanGlobal then
+    if addon == "PFQUEST" then
+      -- MOTOR REACTIVO: Iterar solo sobre pines activos pre-calculados por eventos
+      for _, entry in ipairs(pfQuest.activePins) do
+        local map_id = entry.map_id
         local isCurrentMap = (map_id == currentMap)
 
-        for coords, node in pairs(map_nodes) do
+        if isCurrentMap or scanGlobal then
           if not pfMap.pins[i] then
             pfMap.pins[i] = pfMap:BuildNode("pfMapPin" .. i, WorldMapButton)
           end
 
-          pfMap:UpdateNode(pfMap.pins[i], node, color)
+          pfMap:UpdateNode(pfMap.pins[i], entry.node, color)
 
           -- set position
-          local _, _, x, y = strfind(coords, "(.*)|(.*)")
-          local qid = tonumber(pfMap.pins[i].questid)
-          local cleanTitle = SanitizeQuestTitle(pfMap.pins[i].title)
+          local _, _, x, y = strfind(entry.coords, "(.*)|(.*)")
+          local qid = entry.qid
+          local title = entry.title
+          local cleanTitle = SanitizeQuestTitle(title)
           
-          -- Lock targeting: check if this is the active quest locked by the user
+          -- Lock targeting
           local isTarget = ( pfQuest.route and pfQuest.route.activeQuest == cleanTitle )
           
-          local inLog = nil
-          if qid and pfQuest.questlog[qid] then
-            inLog = true
-          elseif cleanTitle then
-            for logID, logData in pairs(pfQuest.questlog) do
-              if logData.title == cleanTitle then
-                inLog = true
-                break
-              end
-            end
-          end
+          -- Reactive inLog: Si está en activePins, está en el log
+          local inLog = true
           
-          -- Priority Routing: Add to route if in log or explicitly targeted
+          -- Priority Routing
           if ( inLog or pfMap.pins[i].arrow == true or isTarget ) and
             ( ( pfQuest_config["routecluster"] == "1" and pfMap.pins[i].layer >= 9 ) or
             ( pfQuest_config["routeender"] == "1" and pfMap.pins[i].layer == 4) or
@@ -926,18 +921,15 @@ function pfMap:UpdateNodes()
             pfQuest.route:AddPoint({ x, y, pfMap.pins[i], map_id })
           end
 
-          -- Populate tracker list (Available globally if inLog)
-          if inLog or isCurrentMap then
-            for title, node_data in pairs(pfMap.pins[i].node) do
-              pfQuest.tracker.ButtonAdd(title, node_data)
-            end
+          -- Populate tracker list
+          for t, node_data in pairs(pfMap.pins[i].node) do
+            pfQuest.tracker.ButtonAdd(t, node_data, logCache)
           end
 
           -- Visibility Control: Only show on world map if it belongs to current map
           if isCurrentMap and not (pfQuest_config["showcluster"] == "0" and pfMap.pins[i].cluster) and
              not (pfQuest_config["showspawn"] == "0" and addon == "PFQUEST" and not pfMap.pins[i].texture)
           then
-            -- Apply Global Coordinate Projection Layer (GCPL)
             local px, py = pfQuest.Projections:Apply(map_id, x, y)
             x = px / 100 * WorldMapButton:GetWidth()
             y = py / 100 * WorldMapButton:GetHeight()
@@ -950,6 +942,33 @@ function pfMap:UpdateNodes()
           end
 
           i = i + 1
+        end
+      end
+    else
+      -- MOTOR LEGADO: Escaneo estándar para otros addons (Search, Givers, etc.)
+      for map_id, map_nodes in pairs(pfMap.nodes[addon]) do
+        if map_id == currentMap then
+          for coords, node in pairs(map_nodes) do
+            if not pfMap.pins[i] then
+              pfMap.pins[i] = pfMap:BuildNode("pfMapPin" .. i, WorldMapButton)
+            end
+
+            pfMap:UpdateNode(pfMap.pins[i], node, color)
+
+            -- set position
+            local _, _, x, y = strfind(coords, "(.*)|(.*)")
+            
+            -- Visibility Control
+            local px, py = pfQuest.Projections:Apply(map_id, x, y)
+            x = px / 100 * WorldMapButton:GetWidth()
+            y = py / 100 * WorldMapButton:GetHeight()
+
+            pfMap.pins[i]:ClearAllPoints()
+            pfMap.pins[i]:SetPoint("CENTER", WorldMapButton, "TOPLEFT", x, -y)
+            pfMap.pins[i]:Show()
+
+            i = i + 1
+          end
         end
       end
     end

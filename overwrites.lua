@@ -14,47 +14,6 @@ pfDB["quests"]["data"][5929]["obj"] = { ["U"] = { 11956 } }
 pfDB["quests"]["data"][5930]["obj"] = { ["U"] = { 11956 } }
 
 
--- [[ TURTLE WOW — PHANTOM ZONE CORRECTIONS ]]
--- Varios Zone IDs comparten nombre con una zona funcional pero no tienen
--- referencias de NPC ni de objetos, convirtiéndolos en "fantasmas".
--- GetMapIDByName itera con pairs() (orden no determinista), y puede
--- devolver un ID fantasma en lugar del funcional, causando que las
--- misiones y nodos del minimapa no aparezcan en esas mazmorras.
---
--- Mapeos Phantom → Funcional (Turtle WoW):
---   5600 "Dragonmaw Retreat"  → 5601 (tiene minimapa + units)
---   5098 "Hateforge Quarry"   → 5103 (tiene minimapa + units)
---   5550 "Ruins of Grim Batol"→ 5639 (tiene units)
---
--- IDs vanilla que aún contienen todos los datos de NPC/object:
---    209  "Shadowfang Keep"  (181 refs de NPC, 35 de objeto)
---   1581  "The Deadmines"
---   1583  "Blackrock Spire"
---   1584  "Blackrock Depths" (1085 refs de NPC, 462 de objeto)
--- Los IDs 5000+ de abajo comparten esos nombres pero tienen cero refs.
--- Se eliminan para que GetMapIDByName resuelva a los IDs con contenido.
---
--- Vanilla ID → Reemplazos fantasma:
---    209 "Shadowfang Keep"  → 5132, 5150, 5161, 5169, 5173, 5177
---   1581 "The Deadmines"   → 5138
---   1583 "Blackrock Spire" → 5139, 5155, 5164, 5170, 5178
---   1584 "Blackrock Depths"→ 5140
-do
-  local phantom_zones = {
-    5600, 5098, 5550,
-    5132, 5138, 5139, 5140, 5150, 5161,
-    5155, 5164, 5169, 5170, 5173, 5177, 5178,
-  }
-  local zone_locales = { "enUS", "deDE", "esES", "ptBR", "zhCN" }
-  for _, locale in pairs(zone_locales) do
-    local tbl = pfDB["zones"][locale .. "-turtle"]
-    if tbl then
-      for _, zid in pairs(phantom_zones) do
-        tbl[zid] = nil
-      end
-    end
-  end
-end
 
 do -- area trigger
 end

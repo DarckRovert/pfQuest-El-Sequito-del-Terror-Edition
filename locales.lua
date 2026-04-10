@@ -1,4 +1,4 @@
-﻿local locales = {
+local locales = {
   ["ptBR"] = {
     ["Alliance"] = "Aliança",
     ["All Quests"] = "Todas as Missões",
@@ -180,6 +180,7 @@
     ["Use |cff33ffcc%s|r on |cff33ffcc%s|r"] = "Usar |cff33ffcc%s|r em |cff33ffcc%s|r",
     ["Use Cut-Out Minimap Node Icons"] = "Utilizar Ícones Vazados nos Nós no Minimapa",
     ["Use Cut-Out World Map Node Icons"] = "Utilizar Ícones Vazados nos Nós no Mapa-Múndi",
+    ["Use Icons For Tracking Nodes"] = "Use Icons For Tracking Nodes",
     ["Use Monochrome Cluster Icons"] = "Utilizar Ícones Agrupados Monocromáticos",
     ["Use Quest Item at |cff33ffcc%s|r"] = "Usar Item de Missão em |cff33ffcc%s|r",
     ["User Data"] = "Dados de Usuário",
@@ -382,6 +383,7 @@
     ["Use |cff33ffcc%s|r on |cff33ffcc%s|r"] = "Usar |cff33ffcc%s|r sobre |cff33ffcc%s|r",
     ["Use Cut-Out Minimap Node Icons"] = "Usar iconos recortados en el minimapa",
     ["Use Cut-Out World Map Node Icons"] = "Usar iconos recortados en el mapa mundial",
+    ["Use Icons For Tracking Nodes"] = "Usar iconos para nodos de seguimiento",
     ["Use Monochrome Cluster Icons"] = "Usar iconos de grupo monocromáticos",
     ["Use Quest Item at |cff33ffcc%s|r"] = "Usar objeto de misión en |cff33ffcc%s|r",
     ["User Data"] = "Datos de usuario",

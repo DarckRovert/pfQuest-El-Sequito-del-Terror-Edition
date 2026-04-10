@@ -245,7 +245,7 @@ PFEXQuestHelper.MapToggleButton:SetScript("OnClick", function()
     PFEXQuestHelper.Browser:Show()
     PFEXQuestHelper.MapToggleButton:Hide()
 end)
-pfUI.api.SkinButton("PFEXQuestHelperMapToggleButton")
+pfUI.api.SkinButton(PFEXQuestHelper.MapToggleButton)
 
 -- Constructor del árbol de cadenas de misiones
 function PFEXQuestHelper.QuestChainBuilder(questList)

@@ -321,8 +321,11 @@ pfQuest:SetScript("OnUpdate", function()
     pfQuest.queue[id] = nil
     pfQuest.queueCount = pfQuest.queueCount - 1
 
-    -- Force map update
-    pfMap.queue_update = GetTime()
+    -- Sincronización Reactiva: Cuando la cola se vacía, actualizamos el Buffer de Pines Activos
+    if pfQuest.queueCount == 0 then
+      pfQuest:SyncReactivePins()
+      pfMap.queue_update = GetTime()
+    end
 
     -- only return when other entries exist
     if pfQuest.queueCount > 0 then
@@ -339,6 +342,28 @@ pfQuest:SetScript("OnUpdate", function()
     end
   end
 end)
+
+pfQuest.activePins = {}
+--- SyncReactivePins: Motor de eventos que prepara una tabla plana de objetivos activos.
+-- Elimina el lag de 'UpdateNodes' al evitar escaneos de base de datos durante el renderizado.
+function pfQuest:SyncReactivePins()
+  local i = 1
+  pfQuest.activePins = {}
+  if not pfMap.nodes or not pfMap.nodes["PFQUEST"] then return end
+  
+  for map_id, map_nodes in pairs(pfMap.nodes["PFQUEST"]) do
+    for coords, node in pairs(map_nodes) do
+      pfQuest.activePins[i] = { 
+        ["node"] = node, 
+        ["map_id"] = map_id, 
+        ["coords"] = coords,
+        ["title"] = node.title,
+        ["qid"] = tonumber(node.questid)
+      }
+      i = i + 1
+    end
+  end
+end
 
 local questlog_flip, questlog_flop = {}, {}
 function pfQuest:UpdateQuestlog()
@@ -380,14 +405,18 @@ function pfQuest:UpdateQuestlog()
         }
         change = true
       elseif pfQuest.questlog[questid].qlogid ~= qlogid then
-        table.insert(pfQuest.queue, { title, questid, qlogid, "RELOAD" })
+        local cleanTitle = SanitizeQuestTitle(title)
+        table.insert(pfQuest.queue, { cleanTitle, questid, qlogid, "RELOAD" })
         pfQuest.questlog_tmp[questid] = pfQuest.questlog[questid]
+        pfQuest.questlog_tmp[questid].title = cleanTitle
         pfQuest.questlog_tmp[questid].qlogid = qlogid
         pfQuest.questlog_tmp[questid].state = state
         change = true
       elseif pfQuest.questlog[questid].state ~= state then
-        table.insert(pfQuest.queue, { title, questid, qlogid, "RELOAD" })
+        local cleanTitle = SanitizeQuestTitle(title)
+        table.insert(pfQuest.queue, { cleanTitle, questid, qlogid, "RELOAD" })
         pfQuest.questlog_tmp[questid] = pfQuest.questlog[questid]
+        pfQuest.questlog_tmp[questid].title = cleanTitle
         pfQuest.questlog_tmp[questid].qlogid = qlogid
         pfQuest.questlog_tmp[questid].state = state
         change = true
@@ -503,7 +532,7 @@ function pfQuest:AddQuestLogIntegration()
   pfQuest.buttonLanguage:SetHeight(15)
   pfQuest.buttonLanguage:SetPoint("RIGHT", pfQuest.buttonOnline, "LEFT", 0, 0)
 
-  pfQuest.buttonLanguage.txt = pfQuest.buttonLanguage:CreateFontString("pfQuestIDButton", "HIGH", "GameFontWhite")
+  pfQuest.buttonLanguage.txt = pfQuest.buttonLanguage:CreateFontString("pfQuestLangButton", "HIGH", "GameFontWhite")
   pfQuest.buttonLanguage.txt:SetAllPoints(pfQuest.buttonLanguage)
   pfQuest.buttonLanguage.txt:SetJustifyH("RIGHT")
   pfQuest.buttonLanguage.txt:SetText("|cff000000[|cff333333" .. pfQuest_Loc["Translate"] .. "|cff000000]")
@@ -572,7 +601,7 @@ function pfQuest:AddQuestLogIntegration()
   pfQuest.buttonTarget = pfQuest.buttonTarget or CreateFrame("Button", "pfQuestTarget", dockFrame, "UIPanelButtonTemplate")
   pfQuest.buttonTarget:SetWidth(60)
   pfQuest.buttonTarget:SetHeight(20)
-  pfQuest.buttonTarget:SetText(pfQuest_Loc["Arrow"] or "Arrow")
+  pfQuest.buttonTarget:SetText(pfQuest_Loc["Navigation Arrow"])
   pfQuest.buttonTarget:SetPoint("TOP", dockTitle, "TOP", -60, 0)
   pfQuest.buttonTarget:SetScript("OnClick", function()
     local questIndex = GetQuestLogSelection()
@@ -627,7 +656,7 @@ function pfQuest:AddQuestLogIntegration()
   end)
 
   -- use pfUI buttons in native mode
-  if not pfUI.api.emulated then
+  if pfUI and pfUI.api and not pfUI.api.emulated then
     pfUI.api.SkinButton(pfQuest.buttonShow)
     pfUI.api.SkinButton(pfQuest.buttonTarget)
     pfUI.api.SkinButton(pfQuest.buttonHide)

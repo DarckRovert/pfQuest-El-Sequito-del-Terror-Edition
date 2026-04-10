@@ -1,3 +1,12 @@
+## [v5.5.0] — 2026-04-09 [Final-Stabilization]
+
+### 💎 Estabilización Estructural
+- **Fuzzy Quest Matcher**: Introducido un nuevo motor de comparación difusa que ignora diferencias de formato, espacios y mayúsculas. Esto garantiza que las misiones siempre coincidan entre el diario y el mapa.
+- **Sincronización Log-Map**: Refactorización total de los bucles de escaneo para usar comparación alfanumérica pura.
+- **Versión Oficial**: Elevación a la rama estable **v5.5.0**.
+
+---
+
 ## [v5.3.8] — 2026-04-09 [Sync-Fix]
 
 ### 🔄 Sincronización Diario-Mapa

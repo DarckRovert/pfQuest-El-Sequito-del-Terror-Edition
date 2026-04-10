@@ -16,10 +16,6 @@ local function patchtable(base, diff)
   for k, v in pairs(diff) do
     if type(v) == "string" and v == "_" then
       base[k] = nil
-    elseif type(base[k]) == "table" and type(v) == "string" then
-      -- No sobrescribir tablas técnicas con strings de localización.
-      -- Guardamos el nombre dentro de la tabla para mantener la jerarquía.
-      base[k].name = v
     else
       base[k] = v
     end
@@ -119,6 +115,25 @@ for _, db in pairs(dbs) do
 end
 pfDB["minimap-turtle"] = nil
 pfDB["meta-turtle"]    = nil
+
+-- Phantom Zone Cleanup: ejecutar AQUÍ, después del merge en loc.
+-- overwrites.lua los limpiaba en tablas temporales que luego eran re-mergeadas.
+-- Ahora operamos directamente sobre pfDB["zones"]["loc"] (el índice activo).
+-- IDs con nombre pero sin coords/units reales → hacen que GetMapIDByName
+-- resuelva al fantasma en vez del ID funcional con contenido.
+do
+  local phantom_zones = {
+    5600, 5098, 5550,
+    5132, 5138, 5139, 5140, 5150, 5161,
+    5155, 5164, 5169, 5170, 5173, 5177, 5178,
+  }
+  local zloc = pfDB["zones"]["loc"]
+  if zloc then
+    for _, zid in pairs(phantom_zones) do
+      zloc[zid] = nil
+    end
+  end
+end
 
 -- Utility: split a string by delimiter
 local function strsplit(delimiter, subject)
